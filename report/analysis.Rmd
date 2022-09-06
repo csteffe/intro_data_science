@@ -360,12 +360,12 @@ meat_cancer_fct <- Meat_var_fct %>% inner_join(cancer_var, by = "SEQN")
 kable(head(meat_cancer_fct %>% filter(!is.na(got_cancer))), caption = "<b>Cancer and meat consumption variables</b>", digit = 3, format.args  = list(scientific  = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width  = F)
 ```
 
-Here is an illustration of the meat consumption density depending whether the respondents ever had cancer or not.
+Here is an illustration of the meat consumption barplot depending whether the respondents ever had cancer or not.
 ```{r, warning = FALSE}
-#Graph density
-join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = meat_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_density(alpha = 0.4) + labs(x = "meat consumption", y = "density", title = "Meat consumption density if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
+#Graph barplot
+join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = meat_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_bar() + labs(x = "meat consumption", y = "count", title = "Meat consumption barplot if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks=seq(1,10))
 ```
-We can see that the greater the frequency is, the greater the gap in density is.  
+We can see that the greater the frequency is, the greater the gap in barplot is.  
 
 
 We display a table and a barplot to count the number of cancer and the proportion by frequency of meat consumption.
@@ -418,13 +418,13 @@ dairy_cancer <- dairy_var_fct  %>% inner_join(cancer_var, by = "SEQN")
 kable(head(dairy_cancer %>% filter(!is.na(got_cancer))), caption = "<b>Cancer and dairy products consumption variables</b>", digit = 3, format.args  = list(scientific  = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width  = F)
 ```
 
-Here is an illustration of the dairy products consumption density depending whether the respondens ever had cancer or not.
+Here is an illustration of the dairy products consumption barplot depending whether the respondens ever had cancer or not.
 
 ```{r, warning = FALSE}
-#Graph density
-join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = dairy_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_density(alpha = 0.4) + labs(x = "dairy products consumption", y = "density", title = "dairy products consumption density if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
+#Graph barplot
+join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = dairy_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_bar() + labs(x = "dairy products consumption", y = "count", title = "dairy products consumption if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks=seq(1,10))
 ```
-We can see that the greater the frequency is, the smaller the gap in density is between the two groups.  
+We can see that the greater the frequency is, the smaller the gap in barplot is between the two groups.  
 
 
 
@@ -479,11 +479,11 @@ vege_cancer <- vege_var_fct  %>% inner_join(cancer_var, by = "SEQN")
 kable(head(vege_cancer %>% filter(!is.na(got_cancer))), caption = "<b>Cancer and vegetables consumption variables</b>", digit = 3, format.args  = list(scientific  = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width  = F)
 ```
 
-Here is an illustration of the vegetable consumption density depending whether respondents ever had cancer or not.
+Here is an illustration of the vegetable consumption barplot depending whether respondents ever had cancer or not.
 
 ```{r, warning = FALSE}
-#Graph density
-join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = vege_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_density(alpha = 0.4) + labs(x = "Vegetable consumption", y = "density", title = "Vegetable consumption density if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
+#Graph barplot
+join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = vege_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_bar() + labs(x = "Vegetable consumption", y = "count", title = "Vegetable consumption barplot if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks=seq(1,10))
 ```
 
 
@@ -539,13 +539,13 @@ fruit_cancer <- fruit_var_fct  %>% inner_join(cancer_var, by = "SEQN")
 kable(head(fruit_cancer %>% filter(!is.na(got_cancer))), caption = "<b>Cancer and fruits consumption variables</b>", digit = 3, format.args  = list(scientific  = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width  = F)
 ```
 
-Here is an illustration of the fruit consumption density depending whether respondents ever had cancer or not.
+Here is an illustration of the fruit consumption barplot depending whether respondents ever had cancer or not.
 
 ```{r, warning = FALSE}
-#Graph density
-join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = fruit_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_density(alpha = 0.4) + labs(x = "fruit consumption", y = "density", title = "Fruit consumption density if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
+#Graph barplot
+join_food_other_cancer %>% filter(!is.na(got_cancer)) %>% ggplot(aes(x = fruit_cons, group = got_cancer, fill = as.factor(got_cancer))) + geom_bar() + labs(x = "fruit consumption", y = "count", title = "Fruit consumption barplot if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1")) + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
 ```
-We can see that the greater the frequency is, the smaller the gap in density is between the two groups.  
+We can see that the greater the frequency is, the smaller the gap in barplot is between the two groups.  
 
 We display a table and a barplot to count the number of cancers and the proportion by frequency of consumption of fruits.
 
@@ -597,12 +597,12 @@ Dietary_cancer <- Dietary_vars_fct %>% inner_join(cancer_var, by = "SEQN")
 kable(head(Dietary_cancer %>% filter(!is.na(got_cancer))), caption = "<b>Cancer and the type of diet followed variables</b>", digit = 3, format.args  = list(scientific  = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width  = F)
 ```
 
-Here is an illustration of the diet density depending whether respondents ever had cancer or not.
+Here is an illustration of the diet barplot depending whether respondents ever had cancer or not.
 ```{r, warning = FALSE}
-#Graph density
-Dietary_cancer %>% filter(!is.na(got_cancer)&!is.na(diet)) %>% ggplot(aes(x = diet, group = got_cancer, fill = as.factor(got_cancer))) + geom_density(alpha = 0.4) + labs(x = "diet", y = "density", title = "Diet consumption density if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1"))
+#Graph barplot
+Dietary_cancer %>% filter(!is.na(got_cancer)&!is.na(diet)) %>% ggplot(aes(x = diet, group = got_cancer, fill = as.factor(got_cancer))) + geom_bar() + labs(x = "diet", y = "count", title = "Diet consumption if ever got cancer or not") +  scale_fill_manual("Ever had cancer?", values  = c("0"  = "green2", "1"  = "red1"))
 ```
-We can see that for excellent and very good diet the density is higher for the group who got cancer, then the density is relatively higher for the group who never got cancer.
+We can see that for excellent and very good diet the count is higher for the group who got cancer, then the count is relatively higher for the group who never got cancer.
 
 
 We display a table and a barplot to count the number of cancers and the proportion by the type of diet followed.
