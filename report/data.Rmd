@@ -1,0 +1,338 @@
+# **2 Data**
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+
+
+
+
+## 2.1 Sources
+
+Our data comes from the National Health and Nutrition Examination Survey (https://www.cdc.gov/nchs/nhanes/). 
+Each year this institution asks a large amount of questions to a wide representative panel of respondents. Those questions are related to demographic, social economics, health and nutrition. We chose the year 2005 because it is the year that has the richest nutritional database in terms of variety and it is also the one that we found the most relevant and the most qualitative compared to other years. There is a very strong relationship between all our datasets as the survey participants are labeled. Therefore, many of them responded to every surveys.
+
+
+For our study we will use 7 datasets :
+
+
+- Nutrition dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/FFQRAW_D.htm
+
+- Diet Behavior & Nutrition dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/DBQ_D.htm#DBQ700
+
+- Medical condition dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/MCQ_D.htm#MCQ220
+
+- alcohol dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/ALQ_D.htm
+
+- Demography dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/DEMO_D.htm
+
+- Physical activity dataset ->https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/PAQ_D.htm
+
+- Smoking - Cigarette Use dataset -> https://wwwn.cdc.gov/Nchs/Nhanes/2005-2006/SMQ_D.htm
+
+
+## 2.2 Data description
+
+### 2.2.1 Nutrition dataset  
+Here is a preview of our first dataset.
+```{r}
+# we import our dataset about nutrion as a tible with the function read_xpt
+Food_original<-as_tibble(read_xpt(file = here::here("data/FFQRAW_D.XPT")))
+# we use the function gslimpse to see the structure of our table ( first 15 variables)
+glimpse(Food_original[,1:15])
+
+```
+
+
+
+This first dataset about nutrition has `r nrow(Food_original)` observations and `r ncol(Food_original)` variables, it is important to highlight that most of our variables are categorical numeric variables ranged from 1 to 11 :  
+-1=never  
+-2=1-6 times per year  
+-3=7-11 times per year  
+-4=1 time per month  
+-5=2-3 times per month  
+-6=1 time per week  
+-7=2 times per week  
+-8=3-4 times per week  
+-9=5-6 times per week  
+-10=1 time per day  
+-11=2 or more times per day  
+Other values are either blank or error and will be transformed to NA during cleaning process.  
+
+In this dataset we will use many variables that are of interest for our analysis, including :  
+-`SEQN` - `r attributes(Food_original$SEQN)`, it will be our reference to merge our different datasets.  
+
+-`FFQ0069` - `r attributes(Food_original$FFQ0069)`  
+-`FFQ0070` - `r attributes(Food_original$FFQ0070)`  
+-`FFQ0071` - `r attributes(Food_original$FFQ0071)`  
+-`FFQ0072` - `r attributes(Food_original$FFQ0072)`  
+-`FFQ0074` - `r attributes(Food_original$FFQ0074)`  
+-`FFQ0075` - `r attributes(Food_original$FFQ0075)`  
+-`FFQ0076` - `r attributes(Food_original$FFQ0076)`  
+-`FFQ0077` - `r attributes(Food_original$FFQ0077)`  
+-`FFQ0078` - `r attributes(Food_original$FFQ0078)`  
+-`FFQ0079` - `r attributes(Food_original$FFQ0079)`  
+-`FFQ0080` - `r attributes(Food_original$FFQ0080)`  
+-`FFQ0081` - `r attributes(Food_original$FFQ0081)`  
+-`FFQ0082` - `r attributes(Food_original$FFQ0082)`  
+-`FFQ0083` - `r attributes(Food_original$FFQ0083)`  
+-`FFQ0084` - `r attributes(Food_original$FFQ0084)`  
+-`FFQ0085` - `r attributes(Food_original$FFQ0085)`  
+-`FFQ0086` - `r attributes(Food_original$FFQ0086)`  
+-`FFQ0088` - `r attributes(Food_original$FFQ0088)`  
+-`FFQ0089` - `r attributes(Food_original$FFQ0089)`  
+-`FFQ0090` - `r attributes(Food_original$FFQ0090)`  
+
+-`FFQ0007` - `r attributes(Food_original$FFQ0007)`  
+-`FFQ0108` - `r attributes(Food_original$FFQ0108)`  
+-`FFQ0109` - `r attributes(Food_original$FFQ0109)`  
+-`FFQ0110` - `r attributes(Food_original$FFQ0110)`  
+-`FFQ0111` - `r attributes(Food_original$FFQ0111)`  
+-`FFQ0112` - `r attributes(Food_original$FFQ0112)`  
+-`FFQ0137` - `r attributes(Food_original$FFQ0137)`  
+-`FFQ0138` - `r attributes(Food_original$FFQ0138)`  
+
+-`FFQ0028` - `r attributes(Food_original$FFQ0028)` (such as spinach, turnip, collard, mustard, chard, or kale)  
+-`FFQ0029` - `r attributes(Food_original$FFQ0029)` (such as spinach, turnip, collard, mustard, chard, or kale)  
+-`FFQ0030` - `r attributes(Food_original$FFQ0030)`  
+-`FFQ0031` - `r attributes(Food_original$FFQ0031)`  
+-`FFQ0032` - `r attributes(Food_original$FFQ0032)`  
+-`FFQ0033` - `r attributes(Food_original$FFQ0033)`  
+-`FFQ0034` - `r attributes(Food_original$FFQ0034)`  
+-`FFQ0035` - `r attributes(Food_original$FFQ0035)`  
+-`FFQ0036` - `r attributes(Food_original$FFQ0036)`  
+-`FFQ0037` - `r attributes(Food_original$FFQ0037)`  
+-`FFQ0038` - `r attributes(Food_original$FFQ0038)`  
+-`FFQ0039` - `r attributes(Food_original$FFQ0039)`  
+-`FFQ0040` - `r attributes(Food_original$FFQ0040)`  
+-`FFQ0041` - `r attributes(Food_original$FFQ0041)`  
+-`FFQ0042` - `r attributes(Food_original$FFQ0042)`  
+-`FFQ0043` - `r attributes(Food_original$FFQ0043)`  
+-`FFQ0044` - `r attributes(Food_original$FFQ0044)`  
+
+-`FFQ0015` - `r attributes(Food_original$FFQ0015)`  
+-`FFQ0016` - `r attributes(Food_original$FFQ0016)`  
+-`FFQ0017` - `r attributes(Food_original$FFQ0017)`  
+-`FFQ0018` - `r attributes(Food_original$FFQ0018)`  
+-`FFQ0019` - `r attributes(Food_original$FFQ0019)`  
+-`FFQ0020` - `r attributes(Food_original$FFQ0020)`  
+-`FFQ0021` - `r attributes(Food_original$FFQ0021)`  
+-`FFQ0022` - `r attributes(Food_original$FFQ0022)`  
+-`FFQ0023` - `r attributes(Food_original$FFQ0023)`  
+-`FFQ0024` - `r attributes(Food_original$FFQ0024)`  
+-`FFQ0025` - `r attributes(Food_original$FFQ0025)`  
+-`FFQ0026` - `r attributes(Food_original$FFQ0026)`  
+-`FFQ0027` - `r attributes(Food_original$FFQ0027)`  
+
+
+
+```{r}
+#we select all the variables that we will need for our analysis (meat,dairy,vegetable,fruit,)
+Food_vars<-Food_original%>%select(SEQN,FFQ0069,FFQ0070,FFQ0071,FFQ0072,FFQ0074,FFQ0075,FFQ0076,FFQ0077,FFQ0078,FFQ0079,FFQ0080,FFQ0081,FFQ0082,FFQ0083,FFQ0084,FFQ0085,FFQ0086,FFQ0087,FFQ0088,FFQ0089,FFQ0090,FFQ0007,FFQ0108,FFQ0109,FFQ0110,FFQ0111,FFQ0112,FFQ0137,FFQ0138,FFQ0028,FFQ0029,FFQ0030,FFQ0031,FFQ0032,FFQ0033,FFQ0034,FFQ0035,FFQ0036,FFQ0037,FFQ0038,FFQ0039,FFQ0040,FFQ0041,FFQ0042,FFQ0043,FFQ0044,FFQ0015,FFQ0016,FFQ0017,FFQ0018,FFQ0019,FFQ0020,FFQ0021,FFQ0022,FFQ0023,FFQ0024,FFQ0025,FFQ0026,FFQ0027)
+```
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Food_vars[,1:15])
+```
+There is no NA in this dataset.
+
+
+### 2.2.2 Diet Behavior & Nutrition dataset  
+Here is a preview of our second dataset.
+```{r}
+# we import our diet behavior & nutrition dataset
+Dietary_original<-as_tibble(read_xpt(file = here::here("data/DBQ_D.XPT")))
+# we display its structure
+glimpse(Dietary_original[,1:15])
+
+```
+This second dataset has `r nrow(Dietary_original)` observations and `r ncol(Dietary_original)` variables. for our analysis we are only going to use two variables :  
+-`SEQN` - `r attributes(Dietary_original$SEQN)`. It will be our reference to merge our different datasets.  
+
+-`DBQ700` - `r attributes(Dietary_original$DBQ700)`, this variable take a values : 1= Excellent, 2=Very good, 3=Good, 4= fair, 5= poor. all other values are either "refused" or "don't know" and will be cleaned.  
+
+
+```{r}
+Dietary_vars<-Dietary_original%>%select(SEQN,DBQ700)
+# how healthy is the diet
+```
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Dietary_vars)
+```
+
+
+### 2.2.3 Medical dataset 
+Here is a preview of our third dataset.
+```{r}
+# we import our medical dataset
+Medical_original<-as_tibble(read_xpt(file = here::here("data/MCQ_D.XPT")))
+# we display it's structure
+glimpse(Medical_original[,1:15])
+```
+
+
+
+This third dataset is about medical condition has `r nrow(Medical_original)` observations and `r ncol(Medical_original)` variables. For our analysis we are going to use :  
+-`SEQN` - `r attributes(Medical_original$SEQN)`, which will be our reference to merge our different datasets.  
+
+-`MCQ220` - `r attributes(Medical_original$MCQ220)` ? This variable is the one that we will use the most in our analysis.  
+-`MCQ230A` - `r attributes(Medical_original$MCQ230A)`  
+-`MCQ230B` - `r attributes(Medical_original$MCQ230B)`  
+-`MCQ230C` - `r attributes(Medical_original$MCQ230C)`  
+The variable : what kind of cancer exists 4 times(A,B,C,D) in case respondents had multiple cancers, but we will not use the 4th as nobody ever got a 4th cancer.
+
+```{r}
+# we select our variables
+Medical_vars<-Medical_original%>%select(SEQN,MCQ220,MCQ230A,MCQ230B,MCQ230C)
+```
+
+```{r}
+# we change our variable MCQ 220 ever told you had cancer ? the value 9 to NA
+Medical_vars<-Medical_vars%>%replace_with_na(replace=list(MCQ220=9,MCQ230A=9))%>%replace_with_na(replace=list(MCQ230A=99))
+# we change the values so we have 0 if no and 1 if yes because we will need those values for our logistics regression
+Medical_vars<-Medical_vars%>%mutate(MCQ220=recode(Medical_vars$MCQ220,'2'=0))
+
+```
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Medical_vars)
+```
+Only half of the respondents answered if they had cancer or not, and only 4% provided the type of cancer they got. 
+
+
+
+
+### 2.2.4 Alcohol dataset 
+Here is a preview of our forth dataset.
+
+```{r}
+# we import out dataset
+Alcohol_original<-as_tibble(read_xpt(file = here::here("data/ALQ_D.XPT")))
+# we display its structure
+glimpse(Alcohol_original)
+```
+
+This 4th dataset is about Alcohol consumption, it has `r nrow(Alcohol_original)`observations and `r ncol(Alcohol_original)` variables. For our analysis we are going to use :  
+-`SEQN` - `r attributes(Alcohol_original$SEQN)`, it will be our reference to merge our different datasets.  
+
+-`ALQ130` - `r attributes(Alcohol_original$ALQ130)`
+
+```{r}
+# we select our variables
+Alcohol_vars<-Alcohol_original%>%select(SEQN,ALQ130)
+
+# we change for alcool variable all the values 999 to NA
+Alcohol_vars<-Alcohol_vars%>%replace_with_na(replace=list(ALQ130=999))
+
+```
+
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Alcohol_vars)
+```
+There is 41% of missing values about alcohol consumption.
+
+
+
+### 2.2.5 Demography dataset  
+Here is a preview of our fifth dataset.
+
+```{r}
+# we import our dataset
+Demography_original<-as_tibble(read_xpt(file = here::here("data/DEMO_D.XPT")))
+# we display its structure
+glimpse(Demography_original[,1:15])
+```
+
+
+This 5th dataset is about demography it has `r nrow(Demography_original)` observations and `r ncol(Demography_original)` variables. For our analysis we are going to use :  
+-`SEQN` - `r attributes(Demography_original$SEQN)`, which will be our reference to merge our different datasets.  
+
+-`RIAGENDR`- `r attributes(Demography_original$RIAGENDR)`  
+-`RIDAGEYR`- `r attributes(Demography_original$RIDAGEYR)`  
+-`INDHHINC`- `r attributes(Demography_original$INDHHINC)`  
+
+
+```{r}
+# we select our variables
+Demography_vars<-Demography_original%>%select(SEQN,RIAGENDR,RIDAGEYR,INDHHINC)
+# we replace value 99(don't know) and 77(refused) to NA 
+Demography_vars<-Demography_vars %>% replace_with_na(replace=list(INDHHINC=99))%>%replace_with_na(replace=list(INDHHINC=77))
+```
+
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Demography_vars)
+```
+There is only 4% of missing value about income, and no missing values about gender and age.
+
+
+### 2.2.6 Physical activity dataset  
+Here is a preview of our sixth dataset.
+```{r}
+# we import our dataset
+physical_original<-as_tibble(read_xpt(file = here::here("data/PAQ_D.XPT")))
+# we display its structure
+glimpse(physical_original)
+```
+This 6th dataset is about physical activity it has `r nrow(physical_original)` observations and `r ncol(physical_original)` variables. For our analysis we are going to use :  
+-`SEQN` - `r attributes(physical_original$SEQN)`, which will be our reference to merge our different datasets.  
+
+-`PAQ180` - `r attributes(physical_original$PAQ180)`
+
+```{r}
+# we select our variables
+physical_vars<-physical_original%>%select(SEQN,PAQ180)
+#  we replace value 9(don't know) and 7(refused) to NA 
+physical_vars<-physical_vars%>%replace_with_na(replace=list(PAQ180=7))%>%replace_with_na(replace=list(PAQ180=9))
+```
+
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(physical_vars)
+```
+There is 35% missing values about the physical activity variable.
+
+
+### 2.2.7 Smoking - Cigarette Use dataset  
+Here is a preview of our seventh dataset.
+```{r}
+#we import our dataset 
+Smoking_original<-as_tibble(read_xpt(file = here::here("data/SMQ_D.XPT")))
+# we display its structure
+glimpse(Smoking_original[,1:15])
+```
+This 7th dataset is about smoking it has `r nrow(Smoking_original)` observations and `r ncol(Smoking_original)` variables. For our analysis we are going to use :  
+-`SEQN` - `r attributes(Smoking_original$SEQN)` , which will be our reference to merge our different datasets.  
+
+-`SMD070`- `r attributes(Smoking_original$SMD070)`
+```{r}
+# we select our variables
+Smoking_vars<-Smoking_original%>%select(SEQN,SMD070)
+#we replace value 999 to NA
+Smoking_vars<-Smoking_vars%>%replace_with_na(replace=list(SMD070=999))
+```
+
+Here we can observe the proportion of missing values for the selected variables.
+```{r}
+# we use the function freq.na to see the proportion of NA in every variables
+freq.na(Smoking_vars)
+```
+there is 88% of missing values about the average cigarettes smoked per day.
+
+### 2.3 Missing values in our data set
+
+About all the NAs we decide to deal with them and filter them everytime we'll use a particular data set in our other parts. Because as we will merge 7 datasets in the end, if we remove all the NAs right at the start we will loose the majority of observations. Otherwise it would mean that we will have only the respondents who answered every questionnaire and every question, and this would not be good since for example only smokers would answer the questionnaire about smoking.
+
+
+
+
+

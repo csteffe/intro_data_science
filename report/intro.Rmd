@@ -1,0 +1,51 @@
+#  **1 Introduction**
+
+```{r, echo = FALSE, message = FALSE, warning=FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+## 1.1 Overview and motivation
+
+Nowadays, cancer has become the second leading cause of death in the world, a disease that can affect anyone directly or indirectly, through family members or close friends.  
+Both having either already lost a loved one very quickly and suddenly to the advanced stage of cancer disease or learned that one of them was diagnosed with cancer. We therefore feel intrigued by this disease which remains until today a mystery in terms of medical care, treatment and recommendations to stabilize and ideally reduce the growth of cancer cells in the body.  
+No one is spared and it can affect people with a very healthy lifestyle just as much as others who do not necessarily care about their health. This is why we have noted with our different experiences and various conversations on the subject that professionals in the field do not necessarily have the same recommendations in terms of food advice and diets, or even contradictory in certain situations.  
+
+So, we decided to look at the relationship between - diet and cancer. Knowing that the increase of the disease in the human body is due to several factors including bad eating habits, we ask ourselves the question: what are really these bad eating habits? is meat one of them? Some diets encourage people to eat more meat, such as the super protein diet while other diets strongly discourage meat consumption. Yet in 2015, WHO had classified red meat as a carcinogen.  
+
+So, our objectives are to see if there is any relation between the different foods, that is to say vegetables, fruits, meats and cancer. We will also take into account all other variables that are not related to diet such as smoking cigarettes, age, gender, physical activity, alcohol consumption and the economic status of our respondents. Ideally, we would like to bring a more scientific and informative approach to the topic as there is a lot of confusion on this topic due to the wide availability information on the Internet and trends in different regimes.  
+
+
+
+
+## 1.2 Research questions
+1) Does eating meat have a relationship with cancer ?  
+Our hypothesis is that meat consumption may increase the risk of cancer.  
+
+2) Does eating dairy products have a relationship with cancer ?  
+Our hypothesis is that dairy products consumption may increase the risk of cancer.  
+
+3) Does eating vegetable have a relationship with cancer ?  
+Our hypothesis is that vegetable consumption may decrease the risk of cancer.  
+
+4) Does eating fruit have a relationship with cancer ?  
+Our hypothesis is that fruit consumption may decrease the risk of cancer.  
+
+5) Does having an healthy has a effect on cancer ?  
+Our hypothesis is that having a healthy diet may decrease the risk of cancer.
+
+At the beginning we wanted to mainly focus on meat, but finally we have decided to broaden our scope. Moreover these questions might evolve once we will be working on the analysis part.
+
+
+
+## 1.3 Related work  
+WHO report says eating processed meat and red meat are carcinogenic :
+https://www.hsph.harvard.edu/nutritionsource/2015/11/03/report-says-eating-processed-meat-is-carcinogenic-understanding-the-findings/
+
+Health Concerns About Dairy. From Washington Physician committee responsible medecine:  
+https://www.pcrm.org/good-nutrition/nutrition-information/health-concerns-about-dairy#:~:text=Milk%20and%20other%20dairy%20products,%2C%20ovarian%2C%20and%20prostate%20cancers.
+
+Does having a healthy diet reduce my risk of cancer? From Cancer research UK:    
+https://www.cancerresearchuk.org/about-cancer/causes-of-cancer/diet-and-cancer/does-having-a-healthy-diet-reduce-my-risk-of-cancer
+
+Diet and Physical Activity: What’s the Cancer Connection? From American Cancer Society:    
+https://www.cancer.org/cancer/cancer-causes/diet-physical-activity/diet-and-physical-activity.html

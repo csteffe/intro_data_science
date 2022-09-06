@@ -1,0 +1,740 @@
+# **4 Analysis**
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+
+
+
+## 4.1 Approach and Method
+
+We will begin our analysis on the different variables that can influence cancer, by examining the direct relationship between cancer and each of our non-food variables, then we will examine the relationship between cancer and each of our food variables which will be examined further in the detail and depth compared to other variables.
+
+For the non-food variables, we will establish a proportion barplot then we will look at the p-value of the coefficient and so if the latter is significant then it will be integrated into a generalized linear model.
+For food variables, we will do the same thing but in addition, we will model their individual effects on cancer and
+ we will illustrate the regression.
+
+Finally, we will select all variables significant at the 5% level and train a multivariate model with those selected variables, then we will compare this model to a full model including all variables.
+We chose the GLM regression with the binary method, because the variable we want to predict “got_cancer” is binary as it takes the value 0 if the respondent has never had cancer and the value of 1 if the respondent has already had cancer. cancer.
+
+At the start of our project, we only wanted to take into account the variables related to our research questions but finally we decided to widen our scope by including more variables that could be confounding, and influence or impact our results.
+
+
+
+For the analysis, we create a table where we group all our data so all our explanatory variables, this table will be useful to explain `got_cancer`.
+```{r}
+# We create a table where we join all of our data, all of our explanatory variables (i.e. food variables and non-food) with the variable got_cancer
+join_food_other_cancer<-cancer_var%>%inner_join(join_food_other_vars, by="SEQN")
+kable(head(join_food_other_cancer%>%filter(!is.na(got_cancer))),caption="<b>cancer, food and other variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+
+```
+
+
+
+## 4.2 Cancer and non food variables
+
+In this section, we will briefly study the relationship with `got_cancer` and the variables which are not related to our research questions but which may have an impact on our interpretation. To study them, we will observe the proportion of cancer as well as the individual significance to determine if these variables would be useful for modeling `got_cancer`.
+
+## 4.2.1 Cancer and age
+
+We create a table including our `got_cancer` and `age` variables.
+
+```{r}
+# We create a table with by joining cancer and age
+cancer_age<-age_var_fct%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_age%>%filter(!is.na(got_cancer))),caption="<b>Cancer and age variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+We display a table and a barplot to count the number of cancers and the proportion by age categories.
+
+```{r}
+# We create a new cancer_age_grouped table, we filter NA then we group by age and got_cancer we choose the option drop = FALSE to prevent the group with 0 cancer from being dropped, we use recap to count for each number of categories of age and then we use the mutate function to create the proportion, finally we sort in ascending order with arrange
+
+cancer_age_grouped<-cancer_age%>%filter(!is.na(got_cancer))%>%group_by(age,got_cancer,.drop=FALSE)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(age)
+kable(cancer_age_grouped,caption="<b>Cancer by age categories</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+
+
+# We make a barplot with our data cancer_age. We put age on the x axis and got_cancer on the y axis with the fill position to have the proportions of cancer by category of age.
+
+
+ggplot(data=cancer_age%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=age,fill=as.factor(got_cancer)),position="fill")+labs(title="Age and cancer",x = "age category", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+We can observe that we have no data about babies, kid and teenagers. We can clearly see that the older the respondents, the greater the proportion of them who have had cancer.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with age explaining cancer with the family binomial
+model_age<-glm(got_cancer~age,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+print("coefficient")
+coef(summary(model_age))[2,1]  
+print("p-value")
+coef(summary(model_age))[2,'Pr(>|z|)']
+
+
+
+
+```
+We can see that the coefficient has a small positive effect on cancer, but it is significant because its value is close to 0, this variable will be useful for our partial multivariate mode.
+
+## 4.2.2 Cancer and gender
+
+We create a table including our `got_cancer` and `gender` variables.
+
+```{r}
+# We create a table with by joining cancer and gender
+cancer_gender<-gender_var_fct%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_gender%>%filter(!is.na(got_cancer))),caption="<b>Cancer and gender</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+We display a table and a barplot to count the number of cancers and the proportion by gender.
+
+```{r}
+# We create a new table cancer_gender_grouped, we filter NA then we group by gender and got_cancer and we use summarize to count by gender, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+cancer_gender_grouped<-cancer_gender%>%filter(!is.na(got_cancer))%>%group_by(gender,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(gender)
+kable(cancer_gender_grouped,caption="<b>Cancer by gender</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+
+
+# We make a barplot with our data cancer_gender. We put gender on the x axis and got_cancer on the y axis with the fill position to have the proportions of cancer by gender.
+
+ggplot(data=cancer_gender%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=gender,fill=as.factor(got_cancer)),position="fill")+labs(title="Gender and cancer",x = "Gender", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+There is a small difference between men (7.6%) and women (9%), it is necessary to know if this difference of 1.4% is significant or not.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with gender explaining cancer with the family binomial
+model_gender<-glm(got_cancer~gender,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+print("coefficient")
+coef(summary(model_gender))[2,1]
+print("p-value")
+coef(summary(model_gender))[2,'Pr(>|z|)']
+
+
+
+
+```
+It can be seen that the coefficient has a small positive effect on cancer, but it is not at all significant because the p-value is very large (0.607). This variable will therefore only be taken into account in the complete model.
+
+
+## 4.2.3 Cancer and income
+
+We create a table including `got_cancer` and `income` variables.
+
+```{r}
+# We create a table with by joining cancer and income
+cancer_income<-income_var_fct%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_income%>%filter(!is.na(got_cancer))),caption="<b>Cancer and income</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+We display a table and a barplot to count the number of cancers and the proportion by income categories.
+```{r}
+# We create a new table cancer_income_grouped, we filter NA then we group by income and got_cancer  and we use summarize to count the number of cancer for every income categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+cancer_income_grouped<-cancer_income%>%filter(!is.na(got_cancer)&!is.na(income))%>%group_by(income,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(income)
+kable(cancer_income_grouped,caption="<b>Cancer by income categories</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+
+
+# We make a barplot with our data cancer_income. We put income on the x axis and got_cancer on the y axis with the fill position to have the proportions of cancer by category of income.
+
+ggplot(data=cancer_income%>%filter(!is.na(got_cancer)&!is.na(income)))+geom_bar(mapping=aes(x=income,fill=as.factor(got_cancer)),position="fill")+labs(title="Income and cancer",x = "Income", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))+coord_flip()
+```
+We don't see any trend in the relationship between income and cancer, our data does not suggest that income is related to cancer.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with income explaining cancer with the family binomial
+model_income<-glm(got_cancer~income,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+print("Coefficient")
+coef(summary(model_income))[2,1]
+print("p-value")
+coef(summary(model_income))[2,'Pr(>|z|)']
+
+
+```
+
+We can see that the coefficient has a small negative effect on cancer, but it is only significant at the 0.10 level. So this variable will only be used in the full model.
+
+
+## 4.2.4 Cancer and physical activity
+
+We create a table including `got_cancer` and `avg_physical_activity` variables.
+
+```{r}
+# We create a table with by joining cancer and physical activity
+cancer_physical<-physical_var_fct%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_physical%>%filter(!is.na(got_cancer))),caption="<b>Cancer and physical activity</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+We display a table and a barplot to count the number of cancer and the proportion by income categories.
+```{r}
+# We create a new table cancer_physical_grouped, we filter NA then we group by avg_physical_activity and got_cancer and we use summarize to count the number of cancer for every physical activity category, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+
+cancer_physical_grouped<-cancer_physical%>%filter(!is.na(got_cancer)&!is.na(avg_physical_activity))%>%group_by(avg_physical_activity,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(avg_physical_activity)
+kable(cancer_physical_grouped,caption="<b>Cancer by physical activity</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+
+
+# We make a barplot with our data cancer_physical. We put income on the x axis and got_cancer on the y axis with the fill position to have the proportions of cancer by physical activity.
+
+ggplot(data=cancer_physical%>%filter(!is.na(got_cancer)&!is.na(avg_physical_activity)))+geom_bar(mapping=aes(x=avg_physical_activity,fill=as.factor(got_cancer)),position="fill")+labs(title="Physical activty and cancer",x = "Physical activity", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+We do not see any particular trend, respondents with intensive activity have a little less cancer 4.1% while the others have around 9%.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with physical activity explaining cancer with the family binomial
+model_physical<-glm(got_cancer~avg_physical_activity,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+# We display the coefficient
+print("coefficient")
+coef(summary(model_physical))[2,1]
+# We display the p-value
+print("p-value")
+coef(summary(model_physical))[2,'Pr(>|z|)']
+
+
+
+
+```
+We can see that the coefficient has a small negative effect on cancer but it is not significant since the p-value is very large. This variable will only be used in the full model.
+
+## 4.2.5 Cancer and alcohol
+
+We create a table including `got_cancer` and `avg_alcohol` variables.
+
+```{r}
+# We create a table with by joining cancer and alcohol
+cancer_alcohol<-Alcohol_var%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_alcohol%>%filter(!is.na(got_cancer))),caption="<b>Cancer and Average alcohol consumption</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+About this variable `avg_alcohol`, it's a bit special because we only have the information on the number of drinks, but there is no answer if the respondents do not drink, so the undetermined proportion (NA), maybe people who didn't answer because they don't drink alcohol at all, or it could just be people who didn't answer the question.
+
+
+We are now investigating whether people who did not respond about their alcohol consumption have a different proportion of cancer, but these results need to be taken with a lot of hindsight.
+
+```{r}
+# We add a new variable drink, if avg_alcohol consumption is NA it takes 0 as value and if not NA it take 1, then we use the function factor recode to change 0 to unknown and 1 to yes
+cancer_alcohol<-cancer_alcohol%>%mutate(drink=ifelse(is.na(avg_alcohol),0,1))%>%mutate(drink=fct_recode(as.factor(drink),"unknown"="0","yes"="1"))
+
+# We create a new table cancer_alcohol_grouped, we filter NA then we group by drink and got_cancer  and we use summarize to count the number of cancer for every drink categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+cancer_alcohol_grouped<-cancer_alcohol%>%filter(!is.na(got_cancer))%>%group_by(drink,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(drink)
+kable(cancer_alcohol_grouped%>%filter(!is.na(got_cancer)),caption="<b>declared alcohol drinkers and cancer</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+
+ggplot(data=cancer_alcohol%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=drink,fill=as.factor(got_cancer)),position="fill")+labs(title="Alcohol and cancer",x = " drink alcohol?", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+We observe that people who say they drink have less cancer (7.3%) than those who did not answer the question (9.7%).
+
+
+Next we want to look at the amount of drinks per day and cancer. We make a table with proportion in number of drinks and a scatterplot.
+```{r}
+# We create a new table cancer_alcohol_quantity, we filter NA then we group by drink and got_cancer  and we use summarize to count the number of cancer for every quantities, we use drop = FALSE to keep group with no cancer, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+cancer_alcohol_quantity<-cancer_alcohol%>%filter(!is.na(got_cancer)&!is.na(avg_alcohol))%>%group_by(avg_alcohol,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(avg_alcohol)
+
+kable(cancer_alcohol_quantity%>%filter(!is.na(got_cancer)),caption="<b>Alcohol quantity and cancer</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+
+# We make a scatterplot with our cancer variable and the proportion of cancer
+cancer_alcohol_quantity<-cancer_alcohol_quantity%>%filter(got_cancer==1)
+ggplot(data=cancer_alcohol_quantity,mapping = aes(x=avg_alcohol,y=proportion))+geom_point()+geom_line()+labs(title="number of drinks and cancer",x = "Alcoholic drinks per day", y=" Proportion of cancer")
+```
+We can observe a negative relationship between cancer and alcohol, which is quite surprising.
+But don't forget that NA has a double meaning in this alcohol variable, which does not necessarily give us a very realistic result.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with age explaining cancer with the familly binomial
+model_alcohol<-glm(got_cancer~avg_alcohol,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+# We display the coefficient
+print("coefficient")
+coef(summary(model_alcohol))[2,1]
+# We display the p-value
+print("p-value")
+coef(summary(model_alcohol))[2,'Pr(>|z|)']
+
+
+
+
+```
+
+We see that the coefficient has a negative effect on cancer and is very significant at its p-value close to 0. This variable will still be used in the partial model.
+
+## 4.2.6 Cancer and smoking
+
+We create a table including cancer and smoking variables.
+
+```{r}
+# We create a table with by joining our table Smoking_Var and cancer_var
+cancer_smoking<-Smoking_var%>%inner_join(cancer_var, by="SEQN")
+
+
+kable(head(cancer_smoking%>%filter(!is.na(got_cancer)&!is.na(cigarets_per_day))),caption="<b>Cancer and Cigarettes per day</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+About this variable, it is the same as for alcohol because we only have the information on the number of cigarettes but there is no answer for the respondents who do not smoke, therefore the undetermined proportion (NA) , maybe people who didn't respond because they don't smoke at all, or it could just be people who didn't respond.
+
+
+We are now investigating whether people who did not respond about their cigarette consumption have a different proportion of cancer, but these results need to be taken with a lot of hindsight.
+
+```{r}
+#   We add a new variable smoke if cigarets_per_day is NA it takes 0 as value and if not NA it take 1, then we use the function factor recode to change 0 to unknown and 1 to yes
+cancer_smoking<-cancer_smoking%>%mutate(smoke=ifelse(is.na(cigarets_per_day),0,1))%>%mutate(smoke=fct_recode(as.factor(smoke),"unknown"="0","yes"="1"))
+
+# We create a new table cancer_smoking_grouped, we filter NA then we group by smoke and got_cancer  and we use summarize to count the number of cancer for every categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
+cancer_smoking_grouped<-cancer_smoking%>%filter(!is.na(got_cancer))%>%group_by(smoke,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(smoke)
+kable(cancer_smoking_grouped%>%filter(!is.na(got_cancer)),caption="<b>Smoking and cancer</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+
+ggplot(data=cancer_smoking%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=smoke,fill=as.factor(got_cancer)),position="fill")+labs(title="Smoking and cancer",x = " smoke?", y="Cancer")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+We observe that people who report smoking have a lower proportion of cancer (6.6%) than those who did not answer the question (8.7%).
+
+
+Next we want to look at the number of cigarettes per day and cancer. we make a table with proportion in number of cigarettes and a scatterplot.
+```{r}
+# We create a new cancer_smoking_quantity table, we filter NA then we group by cigarette per day and got_cancer and we use recap to count the number of cancer for each quantity, we use drop = FALSE to keep the group cancer free, then we use the function mutate to create the proportion, finally we sort in ascending order with arrange.
+cancer_smoking_quantity<-cancer_smoking%>%filter(!is.na(got_cancer)&!is.na(cigarets_per_day))%>%group_by(cigarets_per_day,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(cigarets_per_day)
+
+kable(cancer_smoking_quantity%>%filter(!is.na(got_cancer)),caption="<b> Cirattes per day and cancer</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+# We make a scatterplot with cigarets_per_day  variable and the proportion of cancer
+cancer_smoking_quantity<-cancer_smoking_quantity%>%filter(got_cancer==1)
+ggplot(data=cancer_smoking_quantity,mapping = aes(x=cigarets_per_day,y=proportion))+geom_point()+geom_line()+labs(title="number of cigarettes per day and cancer",x = "Cigarettes per day", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+We can see a positive trend but we have to take into account that there is an outlier of 90 cigarettes smoked per day and who had cancer, so it makes it look like the relationship is strong, but this it's not the case.
+
+
+We would like to see the effect of the coefficient and if its p-value is significant.
+```{r}
+# We create a GLM regression with age explaining cancer with the familly binomial
+model_smoking<-glm(got_cancer~cigarets_per_day,family=binomial(link='logit'),data=join_food_other_cancer)
+# We set this option to avoid scientific writing
+options(scipen = 999)
+# We display the coefficient
+print("coefficient")
+coef(summary(model_smoking))[2,1]
+# We display the p-value
+print("p-value")
+coef(summary(model_smoking))[2,'Pr(>|z|)']
+
+
+
+```
+
+We can see that the coefficient has a positive effect on cancer, and the p-value is significant at a level of 0.01. This variable will be used in the partial model.
+
+
+## 4.3 Cancer and food variables relations  
+
+In this section, we will explore in more depth the relationship with `got_cancer` and the variables related to our research questions. To study them, we will observe the proportion of cancer with these variables then we will model `got_cancer`, illustrate the relationship between each variable individually with got_cancer and finally interpret the results.
+
+### 4.3.1 Cancer and Meat
+
+We create a table including our `got_cancer` and our `meat_cons` variables.
+
+```{r}
+# We create a table with by joining cancer and meat
+meat_cancer_fct<-Meat_var_fct%>%inner_join(cancer_var,by="SEQN")
+
+kable(head(meat_cancer_fct%>%filter(!is.na(got_cancer))),caption="<b>Cancer and meat consumption variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+Here is an illustration of the meat consumption density depending whether the respondents ever had cancer or not.
+```{r,warning=FALSE}
+#Graph density
+join_food_other_cancer%>%filter(!is.na(got_cancer))%>%ggplot(aes(x=meat_cons,group=got_cancer,fill=as.factor(got_cancer)))+geom_density(alpha=0.4)+labs(x="meat consumption",y="density",title="Meat consumption density if ever got cancer or not")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red1"))+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+```
+We can see that the greater the frequency is, the greater the gap in density is.  
+
+
+We display a table and a barplot to count the number of cancer and the proportion by frequency of meat consumption.
+
+```{r}
+# We create a new meat_cancer_grouped table, then we filter NA then we group by meat_cons and got_cancer. We choose the option drop = FALSE to prevent the group with 0 cancer from being dropped. Then, we use summarize to count each frequency of consumption of meat consumption, then we use the mutate function to create the proportion and finally we sort in ascending order with the arrange function.
+meat_cancer_grouped<-meat_cancer_fct%>%filter(!is.na(got_cancer))%>%group_by(meat_cons,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(meat_cons)
+
+
+kable(meat_cancer_grouped,caption="<b>Cancer by meat consumption categories</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+```{r}
+# We make a barplot with our data on meat_cancer. We put meat_cons of cancer on the x-axis and cancer on the y-axis with the fill position to have the proportions of cancer by category of meat consumption.
+ggplot(data=meat_cancer_fct%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=meat_cons,fill=as.factor(got_cancer)),position="fill")+labs(title="Meat consumption and cancer",x = "Frequency of meat consumption", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+
+It can be seen that, surprisingly, respondents who never eat meat, which can therefore be considered vegetarians are the category which got more cancer in proportion, we can observe a trend but we must take into account that the high category have no cancer also because this category is small.
+
+
+We create a GLM regression with meat explaining cancer and we compute the pseudo Rsquared.
+```{r}
+# We use the summary function to display the information, and the glm function for our generalized linear regression model to predict the variable got_cancer by meat_cons with a parameter family = binomial
+model_meat<-glm(got_cancer~meat_cons,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_meat)
+pR2(model_meat)
+
+```
+It is seen that the meat consumption coefficient has a negative effect on cancer and a significant p-value at a level of 5%. However, McFadden's pseudo R^2 is 0.43%, which means that meat explains 0.43% of the variation in cancer. This variable will be included in the partial model because it is significant.
+
+
+Here is an illustration of the GLM regression:.
+```{r,warning=FALSE}
+#Ggplot scatterplot with regression 
+join_food_other_cancer%>%ggplot(aes(x=meat_cons,y=got_cancer))+geom_point()+stat_smooth(formula = y~x,method = "glm",method.args = list(family="binomial"),se=FALSE)+labs(x="meat consumption",y="cancer",title="Logistic regression cancer and meat consumption")
+
+```
+
+
+
+### 4.3.2 Cancer and dairy products
+
+We create a table including our got_cancer and our dairy products variables.
+
+```{r}
+# We create a table with by joining cancer and dairy products
+dairy_cancer<-dairy_var_fct %>%inner_join(cancer_var,by="SEQN")
+
+kable(head(dairy_cancer%>%filter(!is.na(got_cancer))),caption="<b>Cancer and dairy products consumption variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+Here is an illustration of the dairy products consumption density depending whether the respondens ever had cancer or not.
+
+```{r,warning=FALSE}
+#Graph density
+join_food_other_cancer%>%filter(!is.na(got_cancer))%>%ggplot(aes(x=dairy_cons,group=got_cancer,fill=as.factor(got_cancer)))+geom_density(alpha=0.4)+labs(x="dairy products consumption",y="density",title="dairy products consumption density if ever got cancer or not")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red1"))+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+```
+We can see that the greater the frequency is, the smaller the gap in density is between the two groups.  
+
+
+
+We display a table and a barplot to count the number of cancers and the proportion by frequency of consumption of dairy products.
+
+```{r}
+# We create a new dairy_cancer_grouped table, then we filter NA then we group by dairy_cons and got_cancer. We choose the option drop = FALSE to prevent the group with 0 cancer from being dropped. Then, we use summarize to count for each number of frequency of dairy products consumption, then we use the mutate function to create the proportion and finally we sort in ascending order with the arrange function.
+dairy_cancer_grouped<-dairy_cancer%>%filter(!is.na(got_cancer))%>%group_by(dairy_cons,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(dairy_cons)
+
+
+kable(dairy_cancer_grouped,caption="<b>Cancer by frequency of consumption of dairy products</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+```{r}
+# We make a barplot with our data on dairy_cancer. We put dairy_cons of cancer on the x-axis and cancer on the y-axis with the fill position to have the proportions of cancer by category of dairy products consumption.
+ggplot(data=dairy_cancer%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=dairy_cons,fill=as.factor(got_cancer)),position="fill")+labs(title="dairy products consumption and cancer",x = "Frequency of dairy products consumption", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+
+It can be seen here that the more the frequency of consumption of dairy products increases, the more respondents actually had cancer.
+
+
+We create a GLM regression with dairy products consumption explaining cancer and we compute the pseudo Rsquared
+```{r}
+# We use the summary function to display the information, and the glm function for our generalized linear regression model to predict the variable got_cancer by dairy_cons with a parameter family = binomial
+model_dairy<-glm(got_cancer~dairy_cons,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_dairy)
+pR2(model_dairy)
+
+```
+We can see that the dairy products consumption coefficient has a positive effect on cancer and a significant p-value at 10%, so it will not be included in the partial model. McFadden's pseudo R^2 is 0.16%, which means that dairy products explains 0.16% of the variation in cancer.
+
+
+Here is an illustration of the GLM regression:
+
+```{r,warning=FALSE}
+#Ggplot scatterplot with regression 
+join_food_other_cancer%>%ggplot(aes(x=dairy_cons,y=got_cancer))+geom_point()+stat_smooth(formula = y~x,method = "glm",method.args = list(family="binomial"),se=FALSE)+labs(x="dairy products consumption",y="cancer",tittle="Logistic regression cancer and dairy products consumption")
+
+```
+
+
+
+### 4.3.3 Cancer and Vegetables
+
+We create a table including our got_cancer and our vegetables variables.
+
+```{r}
+# We create a table with by joining cancer and vegetables
+vege_cancer<-vege_var_fct %>%inner_join(cancer_var,by="SEQN")
+
+kable(head(vege_cancer%>%filter(!is.na(got_cancer))),caption="<b>Cancer and vegetables consumption variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+Here is an illustration of the vegetable consumption density depending whether respondents ever had cancer or not.
+
+```{r,warning=FALSE}
+#Graph density
+join_food_other_cancer%>%filter(!is.na(got_cancer))%>%ggplot(aes(x=vege_cons,group=got_cancer,fill=as.factor(got_cancer)))+geom_density(alpha=0.4)+labs(x="Vegetable consumption",y="density",title="Vegetable consumption density if ever got cancer or not")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red1"))+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+```
+
+
+We display a table and a barplot to count the number of cancers and the proportion by frequency of consumption of vegetables.
+
+```{r}
+# We create a new vege_cancer_grouped table, then we filter NA then we group by vege_cons and got_cancer. We choose the option drop = FALSE to prevent the group with 0 cancer from being dropped. Then, we use summarize to count for each number of frequency of vegetable consumption, then we use the mutate function to create the proportion and finally we sort in ascending order with the arrange function.
+vege_cancer_grouped<-vege_cancer%>%filter(!is.na(got_cancer))%>%group_by(vege_cons,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(vege_cons)
+
+
+kable(vege_cancer_grouped,caption="<b>Cancer by frequency of consumption of vegetables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+```{r}
+# We make a barplot with our data on vege_cancer. We put vege_cons of cancer on the x-axis and cancer on the y-axis with the fill position to have the proportions of cancer by category of vegetable consumption.
+ggplot(data=vege_cancer%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=vege_cons,fill=as.factor(got_cancer)),position="fill")+labs(title="Vegetables consumption and cancer",x = "Frequency of vegetable consumption", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+
+We do not necessarily see a difference or relationship, depending on the frequency of vegetable consumption and the fact of having had cancer.
+
+We create a GLM regression with vegetable consumption explaining cancer and we compute the pseudo Rsquared
+
+```{r}
+# We use the function summary to display information, and the function glm for our generalized linear model regression to predict the variable got_cancer by vege_cons with a parameter family = binomial 
+model_vege<-glm(got_cancer~vege_cons,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_vege)
+pR2(model_vege)
+
+```
+It is seen that the coefficient of vegetable consumption has a positive effect on cancer and a significant p-value at a level of 0.1%, this variable will be included in the partial model. McFadden's pseudo R ^ 2 is 0.62%, which means that vegetable consumption explains 0.62% of the variation in cancer.
+
+
+
+Here is an illustration of the GLM regression:
+
+```{r,warning=FALSE}
+#Ggplot scatterplot with regression 
+join_food_other_cancer%>%ggplot(aes(x=dairy_cons,y=got_cancer))+geom_point()+stat_smooth(formula = y~x,method = "glm",method.args = list(family="binomial"),se=FALSE)+labs(x="dairy products consumption",y="cancer",tittle="Logistic regression cancer and dairy products consumption")
+
+```
+
+
+
+### 4.3.4 Cancer and Fruits
+
+We create a table including our got_cancer and our fruits variables.
+
+```{r}
+# We create a table with by joining cancer and fruits
+fruit_cancer<-fruit_var_fct %>%inner_join(cancer_var,by="SEQN")
+
+kable(head(fruit_cancer%>%filter(!is.na(got_cancer))),caption="<b>Cancer and fruits consumption variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+Here is an illustration of the fruit consumption density depending whether respondents ever had cancer or not.
+
+```{r,warning=FALSE}
+#Graph density
+join_food_other_cancer%>%filter(!is.na(got_cancer))%>%ggplot(aes(x=fruit_cons,group=got_cancer,fill=as.factor(got_cancer)))+geom_density(alpha=0.4)+labs(x="fruit consumption",y="density",title="Fruit consumption density if ever got cancer or not")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red1"))+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+```
+We can see that the greater the frequency is, the smaller the gap in density is between the two groups.  
+
+We display a table and a barplot to count the number of cancers and the proportion by frequency of consumption of fruits.
+
+```{r}
+# We create a new fruit_cancer_grouped table, then we filter NA then we group by fruit_cons and got_cancer. We choose the option drop = FALSE to prevent the group with 0 cancer from being dropped. Then, we use summarize to count for each number of frequency of fruit consumption, then we use the mutate function to create the proportion and finally we sort in ascending order with the arrange function.
+fruit_cancer_grouped<-fruit_cancer%>%filter(!is.na(got_cancer))%>%group_by(fruit_cons,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(fruit_cons)
+
+
+kable(fruit_cancer_grouped,caption="<b>Cancer by frequency of consumption of fruits</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+```{r}
+# We make a barplot with our data on fruit_cancer. We put fruit_cons of cancer on the x-axis and cancer on the y-axis with the fill position to have the proportions of cancer by category of fruits consumption.
+ggplot(data=fruit_cancer%>%filter(!is.na(got_cancer)))+geom_bar(mapping=aes(x=fruit_cons,fill=as.factor(got_cancer)),position="fill")+labs(title="Fruits consumption and cancer",x = "Frequency of fruits consumption", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+
+We can clearly see that the higher the frequency of fruit consumption among our respondents, the more they have cancer. Respondents with high consumption have no cancer probably because this category is very small.
+
+
+We create a GLM regression with fruit consumption explaining cancer and we compute the pseudo Rsquared
+```{r}
+# We use the function summary to display information, and the function glm for our generalized linear model regression to predict the variable got_cancer by fruit_cons with a parameter family = binomial 
+model_fruit<-glm(got_cancer~fruit_cons,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_fruit)
+pR2(model_fruit)
+```
+It can be seen that the fruit consumption coefficient has a positive effect on cancer and a significant p-value at 0.1%, this variable will be included in the partial model. McFadden's pseudo R^2 is 0.7%, which means that fruits explains 0.7% of the variation in cancer.
+
+
+Here is an illustration of the GLM regression:
+
+```{r,warning=FALSE}
+#Ggplot scatterplot with regression 
+join_food_other_cancer%>%ggplot(aes(x=fruit_cons,y=got_cancer))+geom_point()+stat_smooth(formula = y~x,method = "glm",method.args = list(family="binomial"),se=FALSE)+labs(x="fruit consumption",y="cancer",tittle="Logistic regression cancer and fruit consumption")
+
+```
+
+
+
+### 4.3.5 Cancer and diet type.
+
+We create a table including our `got_cancer` and the type of `diet` variables.
+
+```{r}
+# We create a table with by joining cancer and diet.
+Dietary_cancer<-Dietary_vars_fct%>%inner_join(cancer_var,by="SEQN")
+
+kable(head(Dietary_cancer%>%filter(!is.na(got_cancer))),caption="<b>Cancer and the type of diet followed variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+Here is an illustration of the diet density depending whether respondents ever had cancer or not.
+```{r,warning=FALSE}
+#Graph density
+Dietary_cancer%>%filter(!is.na(got_cancer)&!is.na(diet))%>%ggplot(aes(x=diet,group=got_cancer,fill=as.factor(got_cancer)))+geom_density(alpha=0.4)+labs(x="diet",y="density",title="Diet consumption density if ever got cancer or not")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red1"))
+```
+We can see that for excellent and very good diet the density is higher for the group who got cancer, then the density is relatively higher for the group who never got cancer.
+
+
+We display a table and a barplot to count the number of cancers and the proportion by the type of diet followed.
+
+```{r}
+# We create a new Dietary_cancer_grouped table, then we filter NA then we group by diet and got_cancer. We choose the option drop = FALSE to prevent the group with 0 cancer from being dropped. Then, we use summarize to count for each number of the type of diet followed, then we use the mutate function to create the proportion and finally we sort in ascending order with the arrange function.
+Dietary_cancer_grouped<-Dietary_cancer%>%filter(!is.na(got_cancer)&!is.na(diet))%>%group_by(diet,got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(diet)
+
+
+kable(Dietary_cancer_grouped,caption="<b>Cancer by the type of diet followed</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+```
+
+
+```{r}
+# We make a barplot with our data on Dietary_cancer. We put diet of cancer on the x-axis and cancer on the y-axis with the fill position to have the proportions of cancer by category of the type of diet followed.
+ggplot(data=Dietary_cancer%>%filter(!is.na(got_cancer)&!is.na(diet)))+geom_bar(mapping=aes(x=diet,fill=as.factor(got_cancer)),position="fill")+labs(title="the type of diet and cancer",x = "the type of diet followed", y="Cancer proportion")+ scale_fill_manual("Ever had cancer?", values = c("0" = "green2", "1" = "red"))
+```
+
+We can clearly see that the higher the frequency of fruit consumption among our respondents, the more they have cancer. 
+This result which seems quite predictable to us because the fruits are basically sweet and we know that sugar (glucose) provides the necessary nourishment for every cell in our body and also for cancer cells.
+
+
+We create a GLM regression with diet explaining cancer and we compute the pseudo Rsquared.
+```{r}
+# We use the function summary to display information and the function glm for our generalized linear model regression to predict the variable got_cancer by diet with a parameter family = binomial 
+model_diet<-glm(got_cancer~diet,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_diet)
+pR2(model_diet)
+
+```
+We can see that the weight of the diet has a negative effect on cancer. Here, we have to be careful because a healthy diet = 1 and a bad diet = 5. 
+This therefore means that a healthier diet has a positive relationship with cancer and as the p-value is significant at 0.1%, this variable will be included in the partial model. McFadden's pseudo R ^ 2 is 0.75%, which means that the diet type explains 0.75% of the variation in cancer.
+
+
+
+Here is an illustration of the GLM regression:
+```{r,warning=FALSE}
+#Ggplot scatterplot with regression 
+join_food_other_cancer%>%ggplot(aes(x=diet,y=got_cancer))+geom_point()+stat_smooth(formula = y~x,method = "glm",method.args = list(family="binomial"),se=FALSE)+labs(x="diet",y="cancer",tittle="Logistic regression cancer and diet")
+
+```
+
+
+
+
+
+
+## 4.4 Multivariate cancer modelling
+
+
+Now we will start by calculating the partial model with all the individually significant variables, then we will create a model with all the variables (significant and non-significant) and finally we will compare these two models.
+
+### 4.4.1 Multivariate partial model
+
+
+We create a partial model with all the significant variables at the 5% level, which we saw previously:
+
+- Age
+- Alcohol
+- Smoking
+- Meat consumption
+- Vegetable consumption
+- Fruit consumption
+- Type of diet
+
+Here is the GLM regression explaining cancer and with pseudo Rsquared
+```{r}
+# We use the function summary to display information and the function glm for our generalized linear model regression to predict the variable got_cancer with all the variables mentioned before and we set the parameter family = binomial 
+model_sign<-glm(got_cancer~age+avg_alcohol+cigarets_per_day+meat_cons+vege_cons+fruit_cons+diet,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_sign)
+pR2(model_sign)
+
+```
+
+We notice that our partial model including only our individually significant variables, gives us as results that none of our variables is now significant, only the intercept is significant.
+We can also notice that the pseudo McFadden rsquared has a value of 0.0513 and therefore that only 5.13% of the variation in cancer is explained by this model.
+Therefore, this model is extremely poor at predicting cancer as a good model should ideally have a McFadden rsquared value greater than 70% or even 80%.
+
+
+
+
+### 4.4.2 Multivariate full model 
+
+We build a complete model including all the variables we explored previously, including those that were not significant.
+
+```{r}
+model_full<-glm(got_cancer~age+gender+income+avg_physical_activity+avg_alcohol+cigarets_per_day+meat_cons+dairy_cons+vege_cons+fruit_cons+diet,family=binomial(link='logit'),data=join_food_other_cancer)
+summary(model_full)
+pR2(model_full)
+
+```
+For the full model, we can see that gender is significant at a 5% level. This could be due to the fact that as we observed in part 3.3.2,  breast and cervix are cancers that only women can get, are among the most common cancer types in our sample.
+The other significant variable at the 10% level is the consumption of dairy products.
+McFadden's pseudo rsquared is equal to 0.1133 which means that only 11.33% of the variation in cancer is explained by this model, which is unfortunately very poor.
+
+
+
+### 4.4.3 Model comparison and interpretration
+
+The full model is therefore better than the partial model with a McFadden pseudo-square of 11.33% compared to 5.13%.
+Even though it is preferable, 11.33% is still a very poor value for predicting cancer.
+There must be either an important variable explaining a part of the cancer than the one we have studied or else the cancer has a large number of variables with each of them having a small effect, which is the most probable as we included some variables known to cause some cancers.
+
+In the end, there are two significant variables which we can be identified:
+- Gender at the 5% level
+- Consumption of dairy products at the 10% level (which could be considered too high)
+
+
+
+However, one thing that is interesting to observe is the direction of the coefficient of each variable, with a model including all variables: 
+
+-`age` `r coef(summary(model_full))[2,1]` is positive, as we would expect the greater the age is the greater the odds that you got cancer are.  
+-`gender` `r coef(summary(model_full))[3,1]` is positive meaning the odds to get a cancer are greater for women.  
+-`income` `r coef(summary(model_full))[4,1]` is negative meaning the odds to get a cancer are smaller the more income you get.  
+-`avg_physical_activity` `r coef(summary(model_full))[5,1]` is positive, which is the opposite of what we would expect meaning more physical activity the greater the odds to have a cancer are.  
+-`avg_alcohol` `r coef(summary(model_full))[6,1]` is positive which we would expect before starting this project, but which contradict what we observe in point 4.2.5, where it appeared surprisingly more as a negative relationship with cancer.  
+-`cigarettes_per_day` `r coef(summary(model_full))[7,1]` is positive as we could expect. 
+
+-`meat_cons` `r coef(summary(model_full))[8,1]` is negative meaning the odds to get cancer are smaller the more you eat meat, which contradict our hypothesis.  
+-`dairy_cons` `r coef(summary(model_full))[9,1]` is positive meaning the odds to get cancer are greater the more you eat dairy products, which goes in the same direction than our hypothesis.  
+-`vege_cons` `r coef(summary(model_full))[10,1]` is positive meaning the odds to get cancer are greater the more vegetables you eat, which contradict our hypothesis.  
+-`fruit_cons` `r coef(summary(model_full))[11,1]` is negative, which goes in the same direction than our hypothesis, but contradict what we observed in point 4.3.4. Moreover we have to keep in mind that this variable is correlated (50%) with vegetable.  
+-`diet` `r coef(summary(model_full))[12,1]` is positive in that case (for this variable value are ranked for 1 for healthy to 5 for poor) it means the less healthy you eat the greater the odds to get cancer are, which goes in the same direction than our hypothesis, but contradict what we observed in point 4.3.5.
+
+
+
+## 4.5 Answering research questions
+Finally, our variables are not good enough to predict cancer, because the best model we could make could only explain 11.33% of the variation in cancer, so the influence of our variables individually is extremely small and questionable as we have seen.  
+Our hypotheses were that eating healthy, meaning eating vegetables and fruits and therefore having a good diet would reduce the risk of cancer and that, on the contrary, animal products (meat and dairy products) would increase the risk of cancer.  
+However, these assumptions are not supported by our model, when it includes confounding variables, except for the dairy product which has an effect but weak and is the only food variable which is significant, and only at a level of 10%.
+
+
+
+
+

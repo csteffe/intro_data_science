@@ -1,0 +1,31 @@
+# **5 Conclusion**
+
+```{r, echo = FALSE, message = FALSE}
+source(here::here("scripts/setup.R"))
+```
+
+
+
+At the first sight when we investigated the relationship between food and cancer it looked like there were relationships, but it was no longer the case once we introduced potential confounding variables. In the end, only gender and potentially dairy product consumption have an effect. So, it was a good application of this principle for us, as at the very beginning of our project we were not thinking about that which would have lead us to very biased and unrealistic results.  
+
+Although we included many variables that are known to have a relationship with certain cancer, such as smoking, drinking, it is very far from enough to predict cancer, as our model showed us. All the variables in our study have only a very small or no effect, it is therefore very difficult to determine a particular cause.
+There could also be for sure much more variables that were not in the scope of this study (such as genetic or stress level, and more) that could influence cancer or influence the significance of other variables. Moreover, there was only cancer data about adults which might lower the age’s overall effect on our results. 
+Therefore remaining cautious, we cannot come out of this study with precisely identifying a clear relationship or effect between eating habits and cancer. But aside of that our data suggest that gender has an effect on cancer, meaning women got significantly more cancers than men in our sample of respondents.
+
+
+For the future, investigating every particular cancer types compared to particular eating habits could be a potential interesting work. But to do that we would need other data sets with a wider pool of observations for each type of cancer, as our dataset had a very limited number of observations by type of cancer.
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+
