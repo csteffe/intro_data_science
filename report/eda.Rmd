@@ -27,10 +27,10 @@ this is a reminder that all the food variables that we are going to explore are 
 The frequencies of consumption of all our food variables will be reduced from 11 to 4 frequencies. 
 
 -1->Never  
--2,3->Low  
--4,5,6-> Moderate  
--7,8,9,10,11->High  
--88,99->NA  
+-2, 3->Low  
+-4, 5, 6-> Moderate  
+-7, 8, 9, 10, 11->High  
+-88, 99->NA  
 
 
 
@@ -39,33 +39,33 @@ The frequencies of consumption of all our food variables will be reduced from 11
 We first start with the meat variable, we create an array (Meat_vars) connecting our respondent number and meat variables.
 ```{r}
 # we create a meat variable by selecting all meat variables that we have in our Food_original table.
-Meat_vars<-Food_vars %>% select(SEQN,FFQ0069,FFQ0070,FFQ0071,FFQ0072,FFQ0074,FFQ0075,FFQ0076,FFQ0077,FFQ0078,FFQ0079,FFQ0080,FFQ0081,FFQ0082,FFQ0083,FFQ0084,FFQ0085,FFQ0086,FFQ0088,FFQ0089,FFQ0090)
+Meat_vars <- Food_vars %>% select(SEQN, FFQ0069, FFQ0070, FFQ0071, FFQ0072, FFQ0074, FFQ0075, FFQ0076, FFQ0077, FFQ0078, FFQ0079, FFQ0080, FFQ0081, FFQ0082, FFQ0083, FFQ0084, FFQ0085, FFQ0086, FFQ0088, FFQ0089, FFQ0090)
 
 # we replace our meat variables that had the value 88(blank) or 99(error) to NA
-Meat_vars<-Meat_vars%>%replace_with_na(replace=list(FFQ0069=88,FFQ0070=88,FFQ0071=88,FFQ0072=88,FFQ0074=88,FFQ0075=88,FFQ0076=88,FFQ0077=88,FFQ0078=88,FFQ0079=88,FFQ0080=88,FFQ0081=88,FFQ0082=88,FFQ0083=88,FFQ0084=88,FFQ0085=88,FFQ0086=88,FFQ0088=88,FFQ0089=88,FFQ0090=88)) %>% replace_with_na(replace=list(FFQ0069=99,FFQ0070=99,FFQ0071=99,FFQ0072=99,FFQ0074=99,FFQ0075=99,FFQ0076=99,FFQ0077=99,FFQ0078=99,FFQ0079=99,FFQ0080=99,FFQ0081=99,FFQ0082=99,FFQ0083=99,FFQ0084=99,FFQ0085=99,FFQ0086=99,FFQ0088=99,FFQ0089=99,FFQ0090=99))
+Meat_vars <- Meat_vars %>% replace_with_na(replace = list(FFQ0069 = 88, FFQ0070 = 88, FFQ0071 = 88, FFQ0072 = 88, FFQ0074 = 88, FFQ0075 = 88, FFQ0076 = 88, FFQ0077 = 88, FFQ0078 = 88, FFQ0079 = 88, FFQ0080 = 88, FFQ0081 = 88, FFQ0082 = 88, FFQ0083 = 88, FFQ0084 = 88, FFQ0085 = 88, FFQ0086 = 88, FFQ0088 = 88, FFQ0089 = 88, FFQ0090 = 88)) %>% replace_with_na(replace = list(FFQ0069 = 99, FFQ0070 = 99, FFQ0071 = 99, FFQ0072 = 99, FFQ0074 = 99, FFQ0075 = 99, FFQ0076 = 99, FFQ0077 = 99, FFQ0078 = 99, FFQ0079 = 99, FFQ0080 = 99, FFQ0081 = 99, FFQ0082 = 99, FFQ0083 = 99, FFQ0084 = 99, FFQ0085 = 99, FFQ0086 = 99, FFQ0088 = 99, FFQ0089 = 99, FFQ0090 = 99))
 # 
-kable(head(Meat_vars),caption="<b>Meat variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+kable(head(Meat_vars), caption = "<b>Meat variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F) %>% scroll_box(width = "1000px", height = "500px")
 ```
   
 We merge all our meat variables to one variable `meat_cons`.
 ```{r}
 # now we want to create one variable meat_cons, it will be the variable that will regroup the whole meat consumption
 # we use the function mutate with rowMeans to have an average consumption of meat for every individuals, then we use round and ceiling to keep our variable categorical and to preserve the first group which doesn't eat meat at all
-Meat_vars<-Meat_vars%>%mutate(meat_cons=rowMeans(Meat_vars[,-1],na.rm=TRUE))%>%round()%>%ceiling()
+Meat_vars <- Meat_vars %>% mutate(meat_cons = rowMeans(Meat_vars[, -1], na.rm = TRUE)) %>% round() %>% ceiling()
 
 # we create a new tibble with the SEQN and the meat consumption and we filter the nan
-Meat_var<- Meat_vars%>% select(SEQN,meat_cons)%>%filter(!is.nan(meat_cons))
+Meat_var <-  Meat_vars %>% select(SEQN, meat_cons) %>% filter(!is.nan(meat_cons))
 
-kable(head(Meat_var),caption="<b>Meat variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(Meat_var), caption = "<b>Meat variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
 In order to understand the distribution of meat consumption we make a summary and a boxplot.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we use the function summary to display some statistical information
 summary(Meat_var$meat_cons)
 # we make a boxplot to have an idea about the consumption of our sample
-ggplot()+geom_boxplot(data = Meat_var, aes(x=meat_cons))+labs(title="Meat consumption distribution", x="Frequency",y="Meat consumption")
+ggplot() + geom_boxplot(data = Meat_var, aes(x = meat_cons)) + labs(title = "Meat consumption distribution", x = "Frequency", y = "Meat consumption")
 
 
 ```
@@ -73,19 +73,19 @@ With our method we can see that most of the respondents eat meat 7-11 times per 
 
 
 We change the value of the `meat_cons` variable from 1-11 to "never", "low", "moderate" and "high", so it is more understandable. And we display a table to count the number of respondent and the proportion per frequency of meat consumption
-```{r,warning=FALSE}
-# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1),low(2,3),moderate(4,5,6),high(7,8,9,10,11)
-Meat_var_fct<-Meat_var%>%mutate(meat_cons=fct_collapse(as.factor(meat_cons),Never="1",Low=c("2","3"),Moderate=c( "4", "5","6"),High=c("7","8","9","10","11")))
+```{r, warning = FALSE}
+# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1), low(2, 3), moderate(4, 5, 6), high(7, 8, 9, 10, 11)
+Meat_var_fct  <-  Meat_var %>% mutate(meat_cons = fct_collapse(as.factor(meat_cons), Never = "1", Low = c("2", "3"), Moderate = c( "4", "5", "6"), High = c("7", "8", "9", "10", "11")))
 
 
 ```
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 
 # we create a new variable Meat_var_grouped, we filter NA then we group by meat_cons and we use summarize to count for our 4 frequency of meat consumption, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-Meat_var_grouped<-Meat_var_fct%>%filter(!is.na(meat_cons))%>%group_by(meat_cons)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(meat_cons)
- kable(Meat_var_grouped,caption="<b>Meat consumption count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
-ggplot(data=Meat_var_fct,mapping=aes(x=as.factor(meat_cons),fill=meat_cons))+geom_bar()+labs(title="Meat consumption",x = "Frequency of meat consumption",y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+Meat_var_grouped  <-  Meat_var_fct %>% filter(!is.na(meat_cons)) %>% group_by(meat_cons) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(meat_cons)
+ kable(Meat_var_grouped, caption = "<b>Meat consumption count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
+ggplot(data = Meat_var_fct, mapping = aes(x = as.factor(meat_cons), fill = meat_cons)) + geom_bar() + labs(title = "Meat consumption", x = "Frequency of meat consumption", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 ```
 
 We can observe that the main frequency of meat consumption of our respondents is in majority low(52.2%) and moderate(45.1%). There is only 6% with a high consumption and 2% of vegetarians.
@@ -94,15 +94,15 @@ We can observe that the main frequency of meat consumption of our respondents is
 
 We create an array (dairy_vars) connecting our respondent number and all the variables of dairy products.
 ```{r}
-# first we select all the dairy product variables ( cheese,milk etc..)
-dairy_vars<-Food_vars%>%select(SEQN,FFQ0007,FFQ0108,FFQ0109,FFQ0110,FFQ0111,FFQ0112,FFQ0137,FFQ0138)
+# first we select all the dairy product variables ( cheese, milk etc..)
+dairy_vars <- Food_vars %>% select(SEQN, FFQ0007, FFQ0108, FFQ0109, FFQ0110, FFQ0111, FFQ0112, FFQ0137, FFQ0138)
 ```
 
 ```{r}
 # we replace all the value that represent either blank or error by NA 
-dairy_vars<-dairy_vars%>%replace_with_na(replace=list(FFQ0007=88,FFQ0108=88,FFQ0109=88,FFQ0110=88,FFQ0111=88,FFQ0112=88,FFQ0137=88,FFQ0138=88))%>%replace_with_na(replace=list(FFQ0007=99,FFQ0108=99,FFQ0109=99,FFQ0110=99,FFQ0111=99,FFQ0112=99,FFQ0137=99,FFQ0138=99))
+dairy_vars <- dairy_vars %>% replace_with_na(replace = list(FFQ0007 = 88, FFQ0108 = 88, FFQ0109 = 88, FFQ0110 = 88, FFQ0111 = 88, FFQ0112 = 88, FFQ0137 = 88, FFQ0138 = 88)) %>% replace_with_na(replace = list(FFQ0007 = 99, FFQ0108 = 99, FFQ0109 = 99, FFQ0110 = 99, FFQ0111 = 99, FFQ0112 = 99, FFQ0137 = 99, FFQ0138 = 99))
 
-kable(head(dairy_vars),caption="<b>Dairy product variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(dairy_vars), caption = "<b>Dairy product variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
@@ -114,20 +114,20 @@ We merge all our dairy product variables to one variable `dairy_cons`.
 # now we want to create one variable dairy_cons, it will be the variable that will regroup the whole dairy product consumption
 
 # we use the function mutate with rowMeans to have an average consumption of dairy for every individuals, then we use round and ceiling to keep our variable categorical and to preserve the first group which doesn't eat dairy products at all
-dairy_vars<-dairy_vars%>%mutate(dairy_cons=rowMeans(dairy_vars[,-1],na.rm=TRUE))%>%round()%>%ceiling()
+dairy_vars <- dairy_vars %>% mutate(dairy_cons = rowMeans(dairy_vars[, -1], na.rm = TRUE)) %>% round() %>% ceiling()
 
 
 # we create a new tibble with my SEQN and my dairy products consumption
-dairy_var<-dairy_vars%>%select(SEQN,dairy_cons)%>%filter(!is.nan(dairy_cons))
+dairy_var <- dairy_vars %>% select(SEQN, dairy_cons) %>% filter(!is.nan(dairy_cons))
 
-kable(head(dairy_var),caption="<b>Diary products variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(dairy_var), caption = "<b>Diary products variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
   
 In order to understand the distribution of dairy products variable, we make a summary and a boxplot.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot()+geom_boxplot(data = dairy_var, aes(x=dairy_cons))+labs(title="Distribution of consumption of dairy products", x="Frequency",y="Diary products consumption")
+ggplot() + geom_boxplot(data = dairy_var, aes(x = dairy_cons)) + labs(title = "Distribution of consumption of dairy products", x = "Frequency", y = "Diary products consumption")
 # we use the function summary to display some statistical information
 summary(dairy_var$dairy_cons)
 ```
@@ -135,18 +135,18 @@ we can see that most of the respondents eat dairy products around 1 time per mon
 
 
 We change the value of variable `dairy_cons` from 1-11 to "never", "low", "moderate" and "high", and we display a table to count the number and proportion of respondents according to the frequency of consumption of dairy products.
-```{r,warning=FALSE}
-# at this point the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1),low(2,3),moderate(4,5,6),high(7,8,9,10,11)
-dairy_var_fct<-dairy_var%>%mutate(dairy_cons=fct_collapse(as.factor(dairy_cons),never="1",low=c("2","3"),moderate=c( "4", "5","6","7"),high=c("7","8","9","10","11")))
+```{r, warning = FALSE}
+# at this point the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1), low(2, 3), moderate(4, 5, 6), high(7, 8, 9, 10, 11)
+dairy_var_fct <- dairy_var %>% mutate(dairy_cons = fct_collapse(as.factor(dairy_cons), never = "1", low = c("2", "3"), moderate = c( "4", "5", "6", "7"), high = c("7", "8", "9", "10", "11")))
 
 ```
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable dairy_var_grouped, we filter NA then we group by dairy_cons and we use summarize to count for our 4 frequency of dairy products consumption, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-dairy_var_grouped<-dairy_var_fct%>%filter(!is.na(dairy_cons))%>%group_by(dairy_cons)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(dairy_cons)
- kable(dairy_var_grouped,caption="<b> Count and proportion of consumption of dairy products</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+dairy_var_grouped <- dairy_var_fct %>% filter(!is.na(dairy_cons)) %>% group_by(dairy_cons) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(dairy_cons)
+ kable(dairy_var_grouped, caption = "<b> Count and proportion of consumption of dairy products</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
  
- ggplot(data=dairy_var_fct,mapping=aes(x=as.factor(dairy_cons),fill=dairy_cons))+geom_bar()+labs(title="Diary products consumption",x ="Frequency of consumption of dairy products", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ ggplot(data = dairy_var_fct, mapping = aes(x = as.factor(dairy_cons), fill = dairy_cons)) + geom_bar() + labs(title = "Diary products consumption", x  = "Frequency of consumption of dairy products", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 ```
  
  
@@ -161,16 +161,16 @@ We can observe that the main frequency of dairy productions consumption of our r
 Here we explore our vegetable variable, we create an array (vege_var) connecting our respondent number and our vegetable variables.
 
 ```{r}
-#first, we select all the variable that are vegetable ( carot,cabbage etc..)
-vege_vars<-Food_vars%>%select(SEQN,FFQ0028,FFQ0029,FFQ0030,FFQ0031,FFQ0032,FFQ0033,FFQ0034,FFQ0035,FFQ0036,FFQ0037,FFQ0038,FFQ0039,FFQ0040,FFQ0041,FFQ0042,FFQ0043,FFQ0044)
+#first, we select all the variable that are vegetable ( carot, cabbage etc..)
+vege_vars <- Food_vars %>% select(SEQN, FFQ0028, FFQ0029, FFQ0030, FFQ0031, FFQ0032, FFQ0033, FFQ0034, FFQ0035, FFQ0036, FFQ0037, FFQ0038, FFQ0039, FFQ0040, FFQ0041, FFQ0042, FFQ0043, FFQ0044)
 ```
 
 ```{r}
 # we replace all the value that represent either blank or error by NA 
-vege_vars<-vege_vars%>%replace_with_na(replace=list(FFQ0028=88,FFQ0029=88,FFQ0030=88,FFQ0031=88,FFQ0032=88,FFQ0033=88,FFQ0034=88,FFQ0035=88,FFQ0036=88,FFQ0037=88,FFQ0038=88,FFQ0039=88,FFQ0040=88,FFQ0041=88,FFQ0042=88,FFQ0043=88,FFQ0044=88))%>%replace_with_na(replace=list(FFQ0028=99,FFQ0029=99,FFQ0030=99,FFQ0031=99,FFQ0032=99,FFQ0033=99,FFQ0034=99,FFQ0035=99,FFQ0036=99,FFQ0037=99,FFQ0038=99,FFQ0039=99,FFQ0040=99,FFQ0041=99,FFQ0042=99,FFQ0043=99,FFQ0044=99))
+vege_vars <- vege_vars %>% replace_with_na(replace = list(FFQ0028 = 88, FFQ0029 = 88, FFQ0030 = 88, FFQ0031 = 88, FFQ0032 = 88, FFQ0033 = 88, FFQ0034 = 88, FFQ0035 = 88, FFQ0036 = 88, FFQ0037 = 88, FFQ0038 = 88, FFQ0039 = 88, FFQ0040 = 88, FFQ0041 = 88, FFQ0042 = 88, FFQ0043 = 88, FFQ0044 = 88)) %>% replace_with_na(replace = list(FFQ0028 = 99, FFQ0029 = 99, FFQ0030 = 99, FFQ0031 = 99, FFQ0032 = 99, FFQ0033 = 99, FFQ0034 = 99, FFQ0035 = 99, FFQ0036 = 99, FFQ0037 = 99, FFQ0038 = 99, FFQ0039 = 99, FFQ0040 = 99, FFQ0041 = 99, FFQ0042 = 99, FFQ0043 = 99, FFQ0044 = 99))
 
 
-kable(head(vege_vars),caption="<b>Vegetable variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(vege_vars), caption = "<b>Vegetable variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 
 ```
   
@@ -178,20 +178,20 @@ We merge all our vegetable variables to one variable `vege_cons`.
 ```{r}
 # now we want to create one variable vege_cons, it will be the variable that will regroup the whole vegetable consumption
 # we use the function mutate with rowMeans to have an average consumption of vegetable for every individuals, then we use round and ceiling to keep our variable categorical and to preserve the first group which doesn't eat vegetable at all
-vege_vars<-vege_vars%>%mutate(vege_cons=rowMeans(vege_vars[,-1],na.rm=TRUE))%>%round()%>%ceiling()
+vege_vars <- vege_vars %>% mutate(vege_cons = rowMeans(vege_vars[, -1], na.rm = TRUE)) %>% round() %>% ceiling()
 
 # we create a new tibble with my SEQN and my vege consumption
-vege_var<-vege_vars%>%select(SEQN,vege_cons)%>%filter(!is.nan(vege_cons))
+vege_var <- vege_vars %>% select(SEQN, vege_cons) %>% filter(!is.nan(vege_cons))
 
-kable(head(vege_var),caption="<b>Vegetable variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(vege_var), caption = "<b>Vegetable variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
 In order to understand the distribution of vegetable variable, we make a summary and a boxplot.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a summary and a boxplot to have an idea about the consumption of our sample
 
-ggplot()+geom_boxplot(data = vege_var, aes(x=vege_cons))+labs(title="Distribution of vegetable consumption", x="Frequency",y="Vegetable consumption")
+ggplot() + geom_boxplot(data = vege_var, aes(x = vege_cons)) + labs(title = "Distribution of vegetable consumption", x = "Frequency", y = "Vegetable consumption")
 
 
 summary(vege_var$vege_cons)
@@ -200,19 +200,19 @@ we can see that most of the respondents eat vegetables around 7-11 times per yea
 
 
 
-We change the value of variable `vege_cons` from 1 to 10 to "never","loW","moderate","high", and display a table to count the number and proportion of respondents according to the frequency of vegetable consumption.
-```{r,warning=FALSE}
-# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1),low(2,3),moderate(4,5,6),high(7,8,9,10,11)
-vege_var_fct<-vege_var%>%mutate(vege_cons=fct_collapse(as.factor(vege_cons),never="1",low=c("2","3"),moderate=c("4","5","6"),high=c("7","8","9","10","11")))
+We change the value of variable `vege_cons` from 1 to 10 to "never", "loW", "moderate", "high", and display a table to count the number and proportion of respondents according to the frequency of vegetable consumption.
+```{r, warning = FALSE}
+# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1), low(2, 3), moderate(4, 5, 6), high(7, 8, 9, 10, 11)
+vege_var_fct <- vege_var %>% mutate(vege_cons = fct_collapse(as.factor(vege_cons), never = "1", low = c("2", "3"), moderate = c("4", "5", "6"), high = c("7", "8", "9", "10", "11")))
 
 ```
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable vege_var_grouped, we filter NA then we group by vege_cons and we use summarize to count for our 4 frequency of vegetable consumption, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-vege_var_grouped<-vege_var_fct%>%filter(!is.na(vege_cons))%>%group_by(vege_cons)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(vege_cons)
- knitr::kable(vege_var_grouped,caption="<b> Count and proportion of vegetable consumption </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+vege_var_grouped <- vege_var_fct %>% filter(!is.na(vege_cons)) %>% group_by(vege_cons) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(vege_cons)
+ knitr::kable(vege_var_grouped, caption = "<b> Count and proportion of vegetable consumption </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
  
- ggplot(data=vege_var_fct,mapping=aes(x=as.factor(vege_cons),fill=vege_cons))+geom_bar()+labs(title="Vegetable consumption",x ="Frequency of vegetable consumption", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ ggplot(data = vege_var_fct, mapping = aes(x = as.factor(vege_cons), fill = vege_cons)) + geom_bar() + labs(title = "Vegetable consumption", x  = "Frequency of vegetable consumption", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 ```
 
 We can observe that the main frequency of vegetable consumption of our respondents is in majority low(55.4%) and moderate(40.5%). There is only 1% with a high consumption and 3.8% who never eat fruit.
@@ -224,14 +224,14 @@ Here we explore our fruits variable, we create an array (fruit_var) connecting o
 
 ```{r}
 #first, we select all the variable that are fruits
-fruit_vars<-Food_vars%>%select(SEQN,FFQ0015,FFQ0016,FFQ0017,FFQ0018,FFQ0019,FFQ0020,FFQ0021,FFQ0022,FFQ0023,FFQ0024,FFQ0025,FFQ0026,FFQ0027)
+fruit_vars <- Food_vars %>% select(SEQN, FFQ0015, FFQ0016, FFQ0017, FFQ0018, FFQ0019, FFQ0020, FFQ0021, FFQ0022, FFQ0023, FFQ0024, FFQ0025, FFQ0026, FFQ0027)
 ```
 
 ```{r}
 # we replace all the value that represent either blank or error by NA 
-fruit_vars<-fruit_vars%>%replace_with_na(replace=list(FFQ0015=88,FFQ0016=88,FFQ0017=88,FFQ0018=88,FFQ0019=88,FFQ0020=88,FFQ0021=88,FFQ0022=88,FFQ0023=88,FFQ0024=88,FFQ0025=88,FFQ0026=88,FFQ0027=88))%>%replace_with_na(replace=list(FFQ0015=99,FFQ0016=99,FFQ0017=99,FFQ0018=99,FFQ0019=99,FFQ0020=99,FFQ0021=99,FFQ0022=99,FFQ0023=99,FFQ0024=99,FFQ0025=99,FFQ0026=99,FFQ0027=99))
+fruit_vars <- fruit_vars %>% replace_with_na(replace = list(FFQ0015 = 88, FFQ0016 = 88, FFQ0017 = 88, FFQ0018 = 88, FFQ0019 = 88, FFQ0020 = 88, FFQ0021 = 88, FFQ0022 = 88, FFQ0023 = 88, FFQ0024 = 88, FFQ0025 = 88, FFQ0026 = 88, FFQ0027 = 88)) %>% replace_with_na(replace = list(FFQ0015 = 99, FFQ0016 = 99, FFQ0017 = 99, FFQ0018 = 99, FFQ0019 = 99, FFQ0020 = 99, FFQ0021 = 99, FFQ0022 = 99, FFQ0023 = 99, FFQ0024 = 99, FFQ0025 = 99, FFQ0026 = 99, FFQ0027 = 99))
 
-kable(head(fruit_vars),caption="<b>fruit variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(fruit_vars), caption = "<b>fruit variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 
 ```
   
@@ -239,19 +239,19 @@ We merge all our fruit variables to one variable `vege_cons`.
 ```{r}
 # now we want to create one variable fruit_cons, it will be the variable that will regroup the whole vegetable consumption 
 # we use the function mutate with rowMeans to have an average consumption of fruit, for every individuals, then we use round and ceiling to keep our variable categorical and to preserve the first group which doesn't eat fruit at all.
-fruit_vars<-fruit_vars%>%mutate(fruit_cons=rowMeans(fruit_vars[,-1],na.rm=TRUE))%>%round()%>%ceiling()
+fruit_vars <- fruit_vars %>% mutate(fruit_cons = rowMeans(fruit_vars[, -1], na.rm = TRUE)) %>% round() %>% ceiling()
 
 # we create a new tibble with my SEQN and my fruit consumption
-fruit_var<-fruit_vars%>%select(SEQN,fruit_cons)%>%filter(!is.nan(fruit_cons))
+fruit_var <- fruit_vars %>% select(SEQN, fruit_cons) %>% filter(!is.nan(fruit_cons))
 
-kable(head(fruit_var),caption="<b>Fruit variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(fruit_var), caption = "<b>Fruit variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 In order to understand the distribution of fruit variable, we make a summary and a boxplot
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot()+geom_boxplot(data = fruit_var, aes(x=fruit_cons))+labs(title="Distribution of fruit consumption ", x="Frequency",y="Fruit consumption")
+ggplot() + geom_boxplot(data = fruit_var, aes(x = fruit_cons)) + labs(title = "Distribution of fruit consumption ", x = "Frequency", y = "Fruit consumption")
 summary(fruit_var$fruit_cons)
 
 ```
@@ -259,20 +259,20 @@ With our method we can see that most of the respondents eat vegetables around 7-
 
 
 We change the value of variable `fruit_cons` from 1 to "never", "low", "moderate" and "high" and we display a table to count the number and proportion of respondents according to the frequency of fruit consumption.
-```{r,warning=FALSE}
-# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1),low(2,3),moderate(4,5,6),high(7,8,9,19,11)
-fruit_var_fct<-fruit_var%>%mutate(fruit_cons=fct_collapse(as.factor(fruit_cons),never="1",low=c("2","3"),moderate=c("4",
-  "5","6"),high=c("7","8","9","10","11")))
+```{r, warning = FALSE}
+# at this point, the consumption frequency is ranked from 1 (never) to 11 ( 2 or more times per day). We would like to change that to have only 4 levels : never(1), low(2, 3), moderate(4, 5, 6), high(7, 8, 9, 19, 11)
+fruit_var_fct <- fruit_var %>% mutate(fruit_cons = fct_collapse(as.factor(fruit_cons), never = "1", low = c("2", "3"), moderate = c("4", 
+  "5", "6"), high = c("7", "8", "9", "10", "11")))
 ```
 
 
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable fruit_var_grouped, we filter NA then we group by fruit_cons and we use summarize to count for our 4 frequency of fruit consumption, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-fruit_var_grouped<-fruit_var_fct%>%filter(!is.na(fruit_cons))%>%group_by(fruit_cons)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(fruit_cons)
-kable(fruit_var_grouped,caption="<b> Count and proportion of fruit consumption </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+fruit_var_grouped <- fruit_var_fct %>% filter(!is.na(fruit_cons)) %>% group_by(fruit_cons) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(fruit_cons)
+kable(fruit_var_grouped, caption = "<b> Count and proportion of fruit consumption </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
  
-ggplot(data=fruit_var_fct,mapping=aes(x=as.factor(fruit_cons),fill=fruit_cons))+geom_bar()+labs(title="Fruit consumption",x ="Frequency of fruit consumption", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ggplot(data = fruit_var_fct, mapping = aes(x = as.factor(fruit_cons), fill = fruit_cons)) + geom_bar() + labs(title = "Fruit consumption", x  = "Frequency of fruit consumption", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 ```
 We can observe that the main frequency of fruit consumption of our respondents is in majority low(70.5%), then moderate(26.6%). There is 0% with a high consumption and 2.8% who never eat fruit.
 
@@ -283,23 +283,23 @@ Here we explore the type of diet, we create an array (Dietary_vars) connecting o
 ```{r}
 
 # we replace all the value that represent either blank or error by NA 
-Dietary_vars<-Dietary_vars%>%replace_with_na(replace=list(DBQ700=7))%>%replace_with_na(replace=list(DBQ700=9))
+Dietary_vars <- Dietary_vars %>% replace_with_na(replace = list(DBQ700 = 7)) %>% replace_with_na(replace = list(DBQ700 = 9))
 # we rename our variable BBQ700 to "diet"
-colnames(Dietary_vars)<-c("SEQN","diet")
+colnames(Dietary_vars) <- c("SEQN", "diet")
 
-kable(head(Dietary_vars%>%filter(!is.na(diet))),caption="<b>Diteray variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(Dietary_vars %>% filter(!is.na(diet))), caption = "<b>Diteray variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 
 ```
 
 There are different categories defining how healthy the diet is :
 
-1	= Excellent  
-2	= Very good	 
-3	= Good		
-4	= Fair		
-5	= Poor		
-7	= Refused  	
-9	= Don't know	
+1	 =  Excellent  
+2	 =  Very good	 
+3	 =  Good		
+4	 =  Fair		
+5	 =  Poor		
+7	 =  Refused  	
+9	 =  Don't know	
 
 
 
@@ -307,9 +307,9 @@ There are different categories defining how healthy the diet is :
 
 
 In order to understand the distribution of this `diet` variable, we make a summary and a boxplot.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot()+geom_boxplot(data=Dietary_vars, aes(x=diet))+labs(title=" How healthy is the diet ? ", x="Type",y="Diet")
+ggplot() + geom_boxplot(data = Dietary_vars, aes(x = diet)) + labs(title = " How healthy is the diet ? ", x = "Type", y = "Diet")
 
 summary(Dietary_vars$diet)
 
@@ -322,22 +322,22 @@ The different categories are now changed to this :
 3->Good  
 4->Fair  
 5->Poor  
-7,9->NA  
+7, 9->NA  
 
 ```{r}
-# we use factor to change our value to keep (Poor,fair,good,very good, excellent)
-Dietary_vars_fct<-Dietary_vars%>%mutate(diet=fct_recode(as.factor(diet),"Excellent"="1","Very_good"="2" ,"Good"="3","Fair"="4","Poor"="5"))
+# we use factor to change our value to keep (Poor, fair, good, very good, excellent)
+Dietary_vars_fct <- Dietary_vars %>% mutate(diet = fct_recode(as.factor(diet), "Excellent" = "1", "Very_good" = "2" , "Good" = "3", "Fair" = "4", "Poor" = "5"))
 
-kable(head(Dietary_vars_fct%>%filter(!is.na(diet))),caption="<b>Dietary variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(Dietary_vars_fct %>% filter(!is.na(diet))), caption = "<b>Dietary variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 We display a table to count the number and proportion of respondents.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable Dietary_var_grouped, we filter NA then we group by diet and we use summarize to count by our different type of diet. Then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-Dietary_vars_grouped<-Dietary_vars_fct%>%filter(!is.na(diet))%>%group_by(diet)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(diet)
- knitr::kable(Dietary_vars_grouped,caption="<b> Diet - Count and proportion  </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+Dietary_vars_grouped <- Dietary_vars_fct %>% filter(!is.na(diet)) %>% group_by(diet) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(diet)
+ knitr::kable(Dietary_vars_grouped, caption = "<b> Diet - Count and proportion  </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
  
-ggplot(data=subset(Dietary_vars_fct,!is.na(diet)) ,mapping=aes(x=as.factor(diet),fill=diet))+geom_bar()+ labs(title="Dietary type",x ="How healthy is the diet", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ggplot(data = subset(Dietary_vars_fct, !is.na(diet)) , mapping = aes(x = as.factor(diet), fill = diet)) + geom_bar() +  labs(title = "Dietary type", x  = "How healthy is the diet", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 ```
 We can observe that the distribution is very similar to a normal distribution. 
 
@@ -348,21 +348,21 @@ We can observe that the distribution is very similar to a normal distribution.
 We create a table by joining all the previous food variables by their SEQN number to see if there is a correlation between them.
 
 ```{r}
-corr_food_vars<-Meat_var%>%inner_join(dairy_var, by="SEQN")%>%inner_join(vege_var, by="SEQN")%>%inner_join(fruit_var, by="SEQN")%>%inner_join(Dietary_vars, by="SEQN")
+corr_food_vars <- Meat_var %>% inner_join(dairy_var, by = "SEQN") %>% inner_join(vege_var, by = "SEQN") %>% inner_join(fruit_var, by = "SEQN") %>% inner_join(Dietary_vars, by = "SEQN")
 
-knitr::kable(head(corr_food_vars),caption="<b> Variables table </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+knitr::kable(head(corr_food_vars), caption = "<b> Variables table </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
 We then take a look at our correlations between variables, with a correlation matrix and correlation plot.
-```{r,warning=FALSE}
-# we make a correlation matrix and we remove NA with use="complete.obs"
-corrplot(cor(corr_food_vars[,-1],use="complete.obs"),order="AOE",method="color",addCoef.col = "gray")
-corrplot(cor(corr_food_vars[,-1],use="complete.obs"),order="AOE",method="circle",use="complete.obs") 
+```{r, warning = FALSE}
+# we make a correlation matrix and we remove NA with use = "complete.obs"
+corrplot(cor(corr_food_vars[, -1], use = "complete.obs"), order = "AOE", method = "color", addCoef.col = "gray")
+corrplot(cor(corr_food_vars[, -1], use = "complete.obs"), order = "AOE", method = "circle", use = "complete.obs") 
 
 
 ```
-We can observe healthy diet is correlated with vegetable (-0,23) and fruit (-0.2) so people who eat more vegetable and fruits tend to state more that they eat healthy. Also can observe that all the different consumption are positively correlated and particularly vegetable and and fruit consumption(0.5).
+We can observe healthy diet is correlated with vegetable (-0, 23) and fruit (-0.2) so people who eat more vegetable and fruits tend to state more that they eat healthy. Also can observe that all the different consumption are positively correlated and particularly vegetable and and fruit consumption(0.5).
 
 
 
@@ -378,11 +378,11 @@ We start first by the variable age, we create a table (age_var) with the variabl
 
 ```{r}
 # we select our variables
-age_var<-Demography_vars%>%select(SEQN,RIDAGEYR)
+age_var <- Demography_vars %>% select(SEQN, RIDAGEYR)
 # we rename our variable RIDAGEYR to age 
-colnames(age_var)<-c("SEQN","age")
+colnames(age_var) <- c("SEQN", "age")
 # we display its header
-kable(head(age_var),caption="<b>Age variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(age_var), caption = "<b>Age variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
@@ -391,7 +391,7 @@ In order to understand the distribution of `age` we make a boxplot and a summary
 
 ```{r}
 # we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot()+geom_boxplot(data = age_var, aes(x=age))+labs(title="Age distribution", x="Year",y="Age")
+ggplot() + geom_boxplot(data = age_var, aes(x = age)) + labs(title = "Age distribution", x = "Year", y = "Age")
 # we use the function summary to display some statistical information
 summary(age_var$age)
 
@@ -402,29 +402,29 @@ It is important to mention that people over 85 will always tick 85 as this is th
 
 We display a table to count the number of respondent and the proportion per age.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable age_var_grouped, we filter NA then we group by age and we use summarize to count for every age, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-age_var_grouped<-age_var%>%filter(!is.na(age))%>%group_by(age)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(desc(proportion))
- kable(age_var_grouped,caption="<b>Age count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F) %>%scroll_box(width = "1000px", height = "500px")
+age_var_grouped <- age_var %>% filter(!is.na(age)) %>% group_by(age) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(desc(proportion))
+ kable(age_var_grouped, caption = "<b>Age count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)  %>% scroll_box(width = "1000px", height = "500px")
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=age_var,mapping=aes(x=age))+geom_bar()+labs(title="Age",x = "age", y="Count")
+ggplot(data = age_var, mapping = aes(x = age)) + geom_bar() + labs(title = "Age", x = "age", y = "Count")
 
 
 ```
  
 We regroup our data by categories of age.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we use the function mutate and fct_collapse to create categories of age
-age_var_fct<-age_var%>%mutate(age=fct_collapse(as.factor(age),baby=c("0","1","2","3"),kid=c("4","5","6","7","8","9","10","11","12"),teenager=c("13","14","15","16","17","18","19"),young_adult=c("20","21","22","23","24","25","26","27","28","29","30","31","32","33","34","35"),adult=c("36","37","38","39","40","41","42","43","44","45","46","47","48","49"),young_senior=c("50","51","52","53","54","55","56","57","58","59","60","61","62","63","64","65"),senior=c("65","66","67","68","69","70","71","72","73","74","75","76","77","78","79","80","81","82","83","84"),senior_plus="85"))
+age_var_fct <- age_var %>% mutate(age = fct_collapse(as.factor(age), baby = c("0", "1", "2", "3"), kid = c("4", "5", "6", "7", "8", "9", "10", "11", "12"), teenager = c("13", "14", "15", "16", "17", "18", "19"), young_adult = c("20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35"), adult = c("36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49"), young_senior = c("50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65"), senior = c("65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84"), senior_plus = "85"))
 
 
 # we create a new variable age_var__cat_grouped, we filter NA then we group by age categories and we use summarize to count for every age categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-age_var_fct_grouped<-age_var_fct%>%filter(!is.na(age))%>%group_by(age)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(age)
-kable(age_var_fct_grouped,caption="<b>Age count and proportion by categories of age </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+age_var_fct_grouped <- age_var_fct %>% filter(!is.na(age)) %>% group_by(age) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(age)
+kable(age_var_fct_grouped, caption = "<b>Age count and proportion by categories of age </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=age_var_fct,mapping=aes(x=age,fill=age))+geom_bar()+labs(title="Age categories",x = "age category", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')+coord_flip()
+ggplot(data = age_var_fct, mapping = aes(x = age, fill = age)) + geom_bar() + labs(title = "Age categories", x = "age category", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom') + coord_flip()
 
 
 ```
@@ -438,11 +438,11 @@ We create a table(gender_var) with the variables `SEQN` and `RIAGENDR` and then 
 
 ```{r}
 # we select our variables
-gender_var<-Demography_vars%>%select(SEQN,RIAGENDR)
+gender_var <- Demography_vars %>% select(SEQN, RIAGENDR)
 # we rename our variable RIAGENDR to gender so it more understandable
-colnames(gender_var)<-c("SEQN","gender")
+colnames(gender_var) <- c("SEQN", "gender")
 # we display its head
-kable(head(gender_var),caption="<b>Gender variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(gender_var), caption = "<b>Gender variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
@@ -456,18 +456,18 @@ summary(gender_var$gender)
 
 ```{r}
 # we recode our variable gender to male and female 
-gender_var_fct<-gender_var%>%mutate(gender=fct_recode(as.factor(gender),"male"="1","female"="2"))
+gender_var_fct <- gender_var %>% mutate(gender = fct_recode(as.factor(gender), "male" = "1", "female" = "2"))
 ```
 
 
 We display a table to count the number of respondents and the proportion by `gender`.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable gender_var_grouped, we filter NA then we group by gender and we use summarize to count for every gender, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-gender_var_grouped<-gender_var_fct%>%filter(!is.na(gender))%>%group_by(gender)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(gender)
-kable(gender_var_grouped,caption="<b>Gender count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+gender_var_grouped <- gender_var_fct %>% filter(!is.na(gender)) %>% group_by(gender) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(gender)
+kable(gender_var_grouped, caption = "<b>Gender count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=gender_var_fct,mapping=aes(x=gender,fill=gender))+geom_bar()+labs(title="Gender",x = "Gender", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ggplot(data = gender_var_fct, mapping = aes(x = gender, fill = gender)) + geom_bar() + labs(title = "Gender", x = "Gender", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 
 ```
 We can observe that the gender is fairly well balanced in general but there are 188 more women.
@@ -478,57 +478,57 @@ We can observe that the gender is fairly well balanced in general but there are 
 We create a table(income_var) with the variables `SEQN` and `INDHHINC`, and we rename `INDHHINC` to `income`.
 ```{r}
 # we select our variables
-income_var<-Demography_vars%>%select(SEQN,INDHHINC)
+income_var <- Demography_vars %>% select(SEQN, INDHHINC)
 # we rename our variable INDHHINC to income 
-colnames(income_var)<-c("SEQN","income")
+colnames(income_var) <- c("SEQN", "income")
 # we display its head
-kable(head(income_var),caption="<b>income variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(income_var), caption = "<b>income variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 It is important to know that in this variable, `income` is a numeric categorical variable, which refers to certain intervals:
 
--1 = $ 0 to $ 4,999  
--2 = $ 5,000 to $ 9,999  
--3 = $10,000 to $14,999  	
--4 = $15,000 to $19,999  	
--5 = $20,000 to $24,999  	
--6 = $25,000 to $34,999  
--7 = $35,000 to $44,999  	
--8 = $45,000 to $54,999  	
--9 = $55,000 to $64,999  	
--10 =$65,000 to $74,999  	
--11 =$75,000 and Over  
--12 =Over $20,000   
--13 =Under $20,000  
+-1 = $ 0 to $ 4, 999  
+-2 = $ 5, 000 to $ 9, 999  
+-3 = $10, 000 to $14, 999  	
+-4 = $15, 000 to $19, 999  	
+-5 = $20, 000 to $24, 999  	
+-6 = $25, 000 to $34, 999  
+-7 = $35, 000 to $44, 999  	
+-8 = $45, 000 to $54, 999  	
+-9 = $55, 000 to $64, 999  	
+-10  = $65, 000 to $74, 999  	
+-11  = $75, 000 and Over  
+-12  = Over $20, 000   
+-13  = Under $20, 000  
 
 In order to understand the distribution of `income`, we make a summary and a boxplot.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot()+geom_boxplot(data = income_var, aes(x=income))+labs(title="Income distribution", x="Income Category",y="Income")
+ggplot() + geom_boxplot(data = income_var, aes(x = income)) + labs(title = "Income distribution", x = "Income Category", y = "Income")
 # we use the function summary to display some statistical informations
 summary(income_var$income)
 
 ```
-We can observe that our respondent pool has a median income and that the mean equal to 7, that is to say $ 35,000 to $ 44,999.
-50% of our pool earn between $ 20,000 and $ 74,999 and 25% earn less than that and the other 25% earn more.
+We can observe that our respondent pool has a median income and that the mean equal to 7, that is to say $ 35, 000 to $ 44, 999.
+50% of our pool earn between $ 20, 000 and $ 74, 999 and 25% earn less than that and the other 25% earn more.
 
 
 We display a table to count the number of respondent and the proportion by `income`.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we recode our values to what they represent so it is more understandable on graphs
-income_var_fct<-income_var%>%mutate(income=fct_recode(as.factor(income),"0-4,999"="1","5,000-9,999"="2","10,000-14,999"="3","15,000-19,999"="4","20,000-24,999"="5","25,000-34,999"="6","35,000-44,999"="7","45,000-54,999" ="8","55,000-64,999"="9","65,000-74,999"="10","75,000_and_Over"="11","Over_20,000" ="12","Under_20,000" ="13"))
+income_var_fct <- income_var %>% mutate(income = fct_recode(as.factor(income), "0-4, 999" = "1", "5, 000-9, 999" = "2", "10, 000-14, 999" = "3", "15, 000-19, 999" = "4", "20, 000-24, 999" = "5", "25, 000-34, 999" = "6", "35, 000-44, 999" = "7", "45, 000-54, 999"  = "8", "55, 000-64, 999" = "9", "65, 000-74, 999" = "10", "75, 000_and_Over" = "11", "Over_20, 000"  = "12", "Under_20, 000"  = "13"))
 
 
 # we create a new variable income_var_grouped, we filter NA then we group by income and we use summarize to count for every income categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-income_var_grouped<-income_var_fct%>%filter(!is.na(income))%>%group_by(income)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(income)
-kable(income_var_grouped,caption="<b>Income count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+income_var_grouped <- income_var_fct %>% filter(!is.na(income)) %>% group_by(income) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(income)
+kable(income_var_grouped, caption = "<b>Income count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F) %>% scroll_box(width = "1000px", height = "500px")
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=subset(income_var_fct,!is.na(income)),mapping=aes(x=income,fill=income))+geom_bar()+labs(title="Income per household",x = "Income in dollars", y="Count")+coord_flip()+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ggplot(data = subset(income_var_fct, !is.na(income)), mapping = aes(x = income, fill = income)) + geom_bar() + labs(title = "Income per household", x = "Income in dollars", y = "Count") + coord_flip() + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 
 
 ```
-We can observe that in our pool of respondent, household earning more 75,000$ dollars are over represented comparing to other categories.
+We can observe that in our pool of respondent, household earning more 75, 000$ dollars are over represented comparing to other categories.
 
 ### 3.2.4 physical activity
 
@@ -536,11 +536,11 @@ We can observe that in our pool of respondent, household earning more 75,000$ do
 We create a table(physical_var) with our respondent number variable and then we rename `PAQ180` to `avg_physical_activity`.
 ```{r}
 # we select our variables
-physical_var<-physical_vars%>%select(SEQN,PAQ180)
+physical_var <- physical_vars %>% select(SEQN, PAQ180)
 # we rename our variable PAQ180 to avg_physical_activity to make it more understandable
-colnames(physical_var)<-c("SEQN","avg_physical_activity")
+colnames(physical_var) <- c("SEQN", "avg_physical_activity")
 # we display its head
-kable(head(physical_var%>%filter(!is.na(avg_physical_activity))),caption="<b>Physical activity variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(physical_var %>% filter(!is.na(avg_physical_activity))), caption = "<b>Physical activity variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 It is important to mention that this variable is categorical and numeric, which refers to different levels of activity:
 
@@ -551,9 +551,9 @@ It is important to mention that this variable is categorical and numeric, which 
 
 
 In order to understand the distribution of physical activity, we make a summary and a boxplot.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot()+geom_boxplot(data = physical_var, aes(x=avg_physical_activity))+labs(title="Physical activity distribution", x="Category",y="Physical activity")
+ggplot() + geom_boxplot(data = physical_var, aes(x = avg_physical_activity)) + labs(title = "Physical activity distribution", x = "Category", y = "Physical activity")
 # we use the function summary to display some statistical information
 summary(physical_var$avg_physical_activity)
 
@@ -562,18 +562,18 @@ summary(physical_var$avg_physical_activity)
 
 
 We display a table to count the number of respondents and the proportion by physical activity.
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we recode the factors of our variable avg_physical_activity to make it more understandable
 
-physical_var_fct<-physical_var%>%mutate(avg_physical_activity=fct_recode(as.factor(avg_physical_activity),"no_activity"="1","low_activity"="2","moderate_activity"="3","intensive_activity"="4"))
+physical_var_fct <- physical_var %>% mutate(avg_physical_activity = fct_recode(as.factor(avg_physical_activity), "no_activity" = "1", "low_activity" = "2", "moderate_activity" = "3", "intensive_activity" = "4"))
 
 
 
 # we create a new variable physical_var_grouped, we filter NA then we group by average physical activity per day and we use summarize to count for every average physical activity per day categories, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-physical_var_grouped<-physical_var_fct%>%filter(!is.na(avg_physical_activity))%>%group_by(avg_physical_activity)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(avg_physical_activity)
-kable(physical_var_grouped,caption="<b>Physical activity count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+physical_var_grouped <- physical_var_fct %>% filter(!is.na(avg_physical_activity)) %>% group_by(avg_physical_activity) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(avg_physical_activity)
+kable(physical_var_grouped, caption = "<b>Physical activity count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=subset(physical_var_fct,!is.na(avg_physical_activity)),mapping=aes(x=as.factor(avg_physical_activity),fill=avg_physical_activity))+geom_bar()+labs(title="Physical activity",x = "average physical activity per day", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')
+ggplot(data = subset(physical_var_fct, !is.na(avg_physical_activity)), mapping = aes(x = as.factor(avg_physical_activity), fill = avg_physical_activity)) + geom_bar() + labs(title = "Physical activity", x = "average physical activity per day", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom')
 
 
 ```
@@ -587,20 +587,20 @@ It is found that 22.8% have practically no physical activity, 50% have a light a
 we create a table(Alcohol_var) with our variable respondent number and `ALQ130`. Next, we rename `ALQ130` to `avg_alcohol`.
 ```{r}
 # we select our variables
-Alcohol_var<-Alcohol_vars%>%select(SEQN,ALQ130)
+Alcohol_var <- Alcohol_vars %>% select(SEQN, ALQ130)
 # we rename our variable ALQ130 to avg_alcohol 
-colnames(Alcohol_var)<-c("SEQN","avg_alcohol")
+colnames(Alcohol_var) <- c("SEQN", "avg_alcohol")
 # we display its head
-kable(head(Alcohol_var%>%filter(!is.na(avg_alcohol))),caption="<b>Average consumption variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(Alcohol_var %>% filter(!is.na(avg_alcohol))), caption = "<b>Average consumption variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
 
 In order to understand the distribution of the average alcohol consumption, we make a summary and a boxplot.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot()+geom_boxplot(data = Alcohol_var, aes(x=avg_alcohol))+labs(title="Alcohol distribution", x="Number of drinks",y="Alcohol consumption")
+ggplot() + geom_boxplot(data = Alcohol_var, aes(x = avg_alcohol)) + labs(title = "Alcohol distribution", x = "Number of drinks", y = "Alcohol consumption")
 # we use the function summary to display some statistical information
 summary(Alcohol_var$avg_alcohol)
 
@@ -610,12 +610,12 @@ summary(Alcohol_var$avg_alcohol)
 
 We display a table to count the number of respondent and the proportion by average alcohol drinks per day.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable Alcohol_var_grouped, we filter NA then we group by avg_alcohol and we use summarize to count for every number of drinks, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-Alcohol_var_grouped<-Alcohol_var%>%filter(!is.na(avg_alcohol))%>%group_by(avg_alcohol)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(avg_alcohol)
- knitr::kable(Alcohol_var_grouped,caption="<b>Average alcohol consumption count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+Alcohol_var_grouped <- Alcohol_var %>% filter(!is.na(avg_alcohol)) %>% group_by(avg_alcohol) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(avg_alcohol)
+ knitr::kable(Alcohol_var_grouped, caption = "<b>Average alcohol consumption count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F) %>% scroll_box(width = "1000px", height = "500px")
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=Alcohol_var,mapping=aes(x=avg_alcohol))+geom_bar()+labs(title="Average alcohol consumption per day",x = "alcohol", y="Count")
+ggplot(data = Alcohol_var, mapping = aes(x = avg_alcohol)) + geom_bar() + labs(title = "Average alcohol consumption per day", x = "alcohol", y = "Count")
 
 
 ```
@@ -629,20 +629,20 @@ We create a table(Smoking_var) with our variable respondent number and `SMD070`.
 
 ```{r}
 # we select our variables
-Smoking_var<-Smoking_vars%>%select(SEQN,SMD070)
+Smoking_var <- Smoking_vars %>% select(SEQN, SMD070)
 # we rename our variable SMD070 to cigarets_per_day 
-colnames(Smoking_var)<-c("SEQN","cigarets_per_day")
+colnames(Smoking_var) <- c("SEQN", "cigarets_per_day")
 # we display its head
-kable(head(Smoking_var%>%filter(!is.na(cigarets_per_day))),caption="<b>Cigarettes per day variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(Smoking_var %>% filter(!is.na(cigarets_per_day))), caption = "<b>Cigarettes per day variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 It is important to note that it is not possible for us to know if a respondent does not smoke because this information was not requested. We therefore have no precise way of knowing whether a respondent's noted NA is due to the fact that he is a non-smoker or if he did not respond.
 
 
 In order to understand the distribution of `cigarets_per_day` we make a summary and a boxplot
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot()+geom_boxplot(data = Smoking_var, aes(x=cigarets_per_day))+labs(title="Cigarettes per day distribution", x="Number of cigarettes",y="Cigarettes smoked")
+ggplot() + geom_boxplot(data = Smoking_var, aes(x = cigarets_per_day)) + labs(title = "Cigarettes per day distribution", x = "Number of cigarettes", y = "Cigarettes smoked")
 # we use the function summary to display some statistical information
 summary(Smoking_var$cigarets_per_day)
 
@@ -653,12 +653,12 @@ There is also an impressive maximum of 90 cigarettes smoked per day.
 
 We display a table to count the number of respondents and the proportion of cigarettes smoked per day
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable Smoking_var_grouped, we filter NA then we group by cigarets_per_day and we use summarize to count for every number of cigarette smoked, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange
-Smoking_var_grouped<-Smoking_var%>%filter(!is.na(cigarets_per_day))%>%group_by(cigarets_per_day)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(cigarets_per_day)
- knitr::kable(Smoking_var_grouped,caption="<b>Average cigarettes smoked per day  count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+Smoking_var_grouped <- Smoking_var %>% filter(!is.na(cigarets_per_day)) %>% group_by(cigarets_per_day) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(cigarets_per_day)
+ knitr::kable(Smoking_var_grouped, caption = "<b>Average cigarettes smoked per day  count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F) %>% scroll_box(width = "1000px", height = "500px")
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=Smoking_var,mapping=aes(x=cigarets_per_day))+geom_bar()+labs(title="Average cigarettes smoked per day",x = "cigarettes", y="Count")
+ggplot(data = Smoking_var, mapping = aes(x = cigarets_per_day)) + geom_bar() + labs(title = "Average cigarettes smoked per day", x = "cigarettes", y = "Count")
 
 
 ```
@@ -671,15 +671,15 @@ Here we can clearly see that the respondents approximated their number of cigare
 We create a table by joining all the previous non-food related variables by their SEQN number to examine their correlations.
 
 ```{r}
-corr_other_vars<-age_var%>%inner_join(gender_var, by="SEQN")%>%inner_join(income_var, by="SEQN")%>%inner_join(physical_var, by="SEQN")%>%inner_join(Alcohol_var, by="SEQN")%>%inner_join(Smoking_var, by="SEQN")
-kable(head(corr_other_vars),caption="<b>Other variables table</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+corr_other_vars <- age_var %>% inner_join(gender_var, by = "SEQN") %>% inner_join(income_var, by = "SEQN") %>% inner_join(physical_var, by = "SEQN") %>% inner_join(Alcohol_var, by = "SEQN") %>% inner_join(Smoking_var, by = "SEQN")
+kable(head(corr_other_vars), caption = "<b>Other variables table</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 We then examine our correlations between variables with a correlation matrix and a correlation graph.
 ```{r}
-# we make a correlation matrix and we remove NA with use="complete.obs"
-corrplot(cor(corr_other_vars[,-1],use="complete.obs"),order="AOE",method="color",addCoef.col = "gray")
+# we make a correlation matrix and we remove NA with use = "complete.obs"
+corrplot(cor(corr_other_vars[, -1], use = "complete.obs"), order = "AOE", method = "color", addCoef.col = "gray")
 # now we plot the correlation matrix
-corrplot(cor(corr_other_vars[,-1],use="complete.obs"),order="AOE",method="circle") 
+corrplot(cor(corr_other_vars[, -1], use = "complete.obs"), order = "AOE", method = "circle") 
 ```
 There are no strong correlations between the variables. Our highest correlations are :  
 - Age and average alcohol consumption -24.67%  
@@ -696,22 +696,22 @@ In this section, we will explore our variables on cancer. Later, we will regroup
 We create a table (cancer_var) with our variable respondent number and `MCQ220` which we will rename `got_cancer`, this variable got_cancer is the one that we will try to find relationship and to model in our analysis.
 ```{r}
 # we select our variables
-cancer_var<-Medical_vars%>%select(SEQN,MCQ220)
+cancer_var <- Medical_vars %>% select(SEQN, MCQ220)
 # we rename our variable MCQ220 to got_cancer 
-colnames(cancer_var)<-c("SEQN","got_cancer")
+colnames(cancer_var) <- c("SEQN", "got_cancer")
 # we display its head
-kable(head(cancer_var%>%filter(!is.na(got_cancer))),caption="<b>Ever had cancer variable</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(cancer_var %>% filter(!is.na(got_cancer))), caption = "<b>Ever had cancer variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 Our variable got_cancer can only take two values, either 0 if no cancer or 1 if ever had cancer.  
 
 We display a table to count the number of respondents and the proportion who ever had cancer or not.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable cancer_var_grouped, we filter NA then we group by got_cancer and we use summarize to count for every number of respondents who got cancer, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange.
-cancer_var_grouped<-cancer_var%>%filter(!is.na(got_cancer))%>%group_by(got_cancer)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(got_cancer)
-kable(cancer_var_grouped,caption="<b>Ever had cancer count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+cancer_var_grouped <- cancer_var %>% filter(!is.na(got_cancer)) %>% group_by(got_cancer) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(got_cancer)
+kable(cancer_var_grouped, caption = "<b>Ever had cancer count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 # we create a bar plot with a function ggplot et geom_bar
-ggplot(data=subset(cancer_var,!is.na(got_cancer)),mapping=aes(x=as.factor(got_cancer),fill=got_cancer))+geom_bar()+labs(title="Ever had cancer?",x = "Had cancer", y="Count")+geom_text(aes(label=round(stat(prop),digits=3), group=1),stat='count', nudge_y=0.125,va='bottom')+scale_fill_gradient(low="chartreuse3",high="red3")
+ggplot(data = subset(cancer_var, !is.na(got_cancer)), mapping = aes(x = as.factor(got_cancer), fill = got_cancer)) + geom_bar() + labs(title = "Ever had cancer?", x = "Had cancer", y = "Count") + geom_text(aes(label = round(stat(prop), digits = 3), group = 1), stat = 'count', nudge_y = 0.125, va = 'bottom') + scale_fill_gradient(low = "chartreuse3", high = "red3")
 
 
 ```
@@ -722,40 +722,40 @@ This small result could be due to several reasons, one of which may be because o
 ### 3.3.2 Cancer types
 
 
-We create a table(cancer_type_var) with our variables respondent number `SEQN`, `MCQ230A`, `MCQ230B` ,`MCQ230C` that we will rename to `cancer_typeQ1`, `cancer_typeQ2` and `cancer_typeQ3`.
+We create a table(cancer_type_var) with our variables respondent number `SEQN`, `MCQ230A`, `MCQ230B` , `MCQ230C` that we will rename to `cancer_typeQ1`, `cancer_typeQ2` and `cancer_typeQ3`.
 
 ```{r}
 # we select our variables
-cancer_type_var<-Medical_vars%>%select(SEQN,MCQ230A,MCQ230B,MCQ230C)
-# we rename our variable  MCQ230A,MCQ230B,MCQ230C to cancer_typeQ1, cancer_typeQ2,cancer_typeQ3 
-colnames(cancer_type_var)<-c("SEQN","cancer_typeQ1","cancer_typeQ2","cancer_typeQ3")
+cancer_type_var <- Medical_vars %>% select(SEQN, MCQ230A, MCQ230B, MCQ230C)
+# we rename our variable  MCQ230A, MCQ230B, MCQ230C to cancer_typeQ1, cancer_typeQ2, cancer_typeQ3 
+colnames(cancer_type_var) <- c("SEQN", "cancer_typeQ1", "cancer_typeQ2", "cancer_typeQ3")
 # we display its head
-kable(head(cancer_type_var%>%filter(!is.na(cancer_typeQ1))),caption="<b>Type of Cancer</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(cancer_type_var %>% filter(!is.na(cancer_typeQ1))), caption = "<b>Type of Cancer</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 Now that some respondents have had cancer several times, we need to change the way our data is displayed and for that we use the “pivot longer” function to have only one variable with the type of cancer.
 
 ```{r}
 # we use the function pivot longer to display several observation for one respondent and to have only one variable with the type of cancer
-cancer_type_var<-cancer_type_var%>%pivot_longer(c(`cancer_typeQ1`, `cancer_typeQ2`,`cancer_typeQ3`),names_to = "cancer_typeQ",values_to = "type")
+cancer_type_var <- cancer_type_var %>% pivot_longer(c(`cancer_typeQ1`, `cancer_typeQ2`, `cancer_typeQ3`), names_to = "cancer_typeQ", values_to = "type")
 
 #we recode the factors of our variable type 
 
-cancer_type_var<-cancer_type_var%>%mutate(type=fct_recode(as.factor(type),"Bladder"="10","Blood"="11","Bone"="12","Brain"="13","Breast"="14","Cervix"="15","Colon"="16","Esophagus"="17","Kidney"="19","Larynx"="20","Leukemia"="21","Liver"="22","Lung"="23","Lymphoma"="24","Melanoma"="25","Mouth/tong"="26","Ovary"="28","Prostate"="30","Rectum"="31","Skin_non_melanoma"="32","Skin"="33","Soft_tissue"="34","Stomach"="35","Testicular"="36","Thyroid"="37","Uterus"="38","Other"="39"))
+cancer_type_var <- cancer_type_var %>% mutate(type = fct_recode(as.factor(type), "Bladder" = "10", "Blood" = "11", "Bone" = "12", "Brain" = "13", "Breast" = "14", "Cervix" = "15", "Colon" = "16", "Esophagus" = "17", "Kidney" = "19", "Larynx" = "20", "Leukemia" = "21", "Liver" = "22", "Lung" = "23", "Lymphoma" = "24", "Melanoma" = "25", "Mouth/tong" = "26", "Ovary" = "28", "Prostate" = "30", "Rectum" = "31", "Skin_non_melanoma" = "32", "Skin" = "33", "Soft_tissue" = "34", "Stomach" = "35", "Testicular" = "36", "Thyroid" = "37", "Uterus" = "38", "Other" = "39"))
 
-# we didn't recode 18 (Gallbladder),27 (Nervous_system) and 29 (Pancreas) because nobody got these cancer -> Problem with `mutate()` input `cancer_type`. #i Unknown levels in `f`: 18, 27, 29 #i Input `cancer_type` is `fct_recode(...)`.Unknown levels in `f`: 18, 27, 29
+# we didn't recode 18 (Gallbladder), 27 (Nervous_system) and 29 (Pancreas) because nobody got these cancer -> Problem with `mutate()` input `cancer_type`. #i Unknown levels in `f`: 18, 27, 29 #i Input `cancer_type` is `fct_recode(...)`.Unknown levels in `f`: 18, 27, 29
 
 ```
 
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we create a new variable cancer_type_grouped, we filter NA then we group by type and we use summarize to count for every number of respondents who got cancer, then we use the function mutate to create the proportion, finally we sort by ascending order with arrange in descending order.
-cancer_type_grouped<-cancer_type_var%>%filter(!is.na(type))%>%group_by(type)%>%summarize(count=n())%>%mutate(proportion=count/sum(count))%>%arrange(desc(proportion))
+cancer_type_grouped <- cancer_type_var %>% filter(!is.na(type)) %>% group_by(type) %>% summarize(count = n()) %>% mutate(proportion = count/sum(count)) %>% arrange(desc(proportion))
 
 
-kable(cancer_type_grouped,caption="<b>Type of cancer count and proportion </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+kable(cancer_type_grouped, caption = "<b>Type of cancer count and proportion </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F) %>% scroll_box(width = "1000px", height = "500px")
 # we create a bar plot with a function ggplot et geom_bar
-ggplot()+geom_bar(data=cancer_type_grouped,mapping=aes(x=type,y=count),stat='identity')+labs(title="Cancer types",x = "Cancer type", y="Count")+coord_flip()
+ggplot() + geom_bar(data = cancer_type_grouped, mapping = aes(x = type, y = count), stat = 'identity') + labs(title = "Cancer types", x = "Cancer type", y = "Count") + coord_flip()
 
 
 ```
@@ -773,22 +773,22 @@ In this section, we will study the correlations between the variables related to
 We first create a table: join_food_other_var, where we will merge all our food and non-food variables. Then we will explore if there are strong correlations between them.
 ```{r}
 # we use inner join to join all our table
-join_food_other_vars<-corr_other_vars%>%inner_join(corr_food_vars,by="SEQN")
+join_food_other_vars <- corr_other_vars %>% inner_join(corr_food_vars, by = "SEQN")
 #need to add food variables once sarah has finished
 # we display the head of our new table
-kable(head(join_food_other_vars),caption="<b>Food variables and others </b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(join_food_other_vars), caption = "<b>Food variables and others </b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 
 ```
 
 
 ```{r}
 # we use the function cor to have a correlation matrix( with parameters complete.obs) within the function corr plot to plot the correlation matrix
-corrplot(cor(join_food_other_vars[,-1],use="complete.obs"),method="color",addCoef.col = "gray",number.cex=0.5)
-corrplot(cor(join_food_other_vars[,-1],use="complete.obs"),method="circle") 
+corrplot(cor(join_food_other_vars[, -1], use = "complete.obs"), method = "color", addCoef.col = "gray", number.cex = 0.5)
+corrplot(cor(join_food_other_vars[, -1], use = "complete.obs"), method = "circle") 
 ```
 There are no strong correlations between the food variables and the other variables, only age and gender seem to have small correlations. we can observe that there is a correlation of -0.2 between age and diet, which means that older people would eat healthier.  
-We also see that age is negatively correlated with the consumption of dairy products (-0.15) and positively correlated with the consumption of vegetables (+0.18) as well as with the consumption of fruits (+0.15), which would mean that the lower the age, the higher the consumption of dairy products is, and the smaller fruits and vegetables consumption is.  
-Regarding gender, we can observe a negative correlation with the consumption of meat (-0.13) and a positive correlation with the consumption of dairy products (+0.14), which means that women tend to eat a little less meat and a little more dairy than men, according to our data.  
+We also see that age is negatively correlated with the consumption of dairy products (-0.15) and positively correlated with the consumption of vegetables ( + 0.18) as well as with the consumption of fruits ( + 0.15), which would mean that the lower the age, the higher the consumption of dairy products is, and the smaller fruits and vegetables consumption is.  
+Regarding gender, we can observe a negative correlation with the consumption of meat (-0.13) and a positive correlation with the consumption of dairy products ( + 0.14), which means that women tend to eat a little less meat and a little more dairy than men, according to our data.  
 On the other hand, there is no correlation between gender and diet, consumption of vegetables and consumption of fruits. 
 Smoking is also a little negatively correlated with fruit consumption (-0.15). 
 
@@ -800,20 +800,20 @@ Based on the correlation, we study the relationships between our variables age, 
 
 ```{r}
 # we join all the variables we need
-age_gender_food<-age_var_fct%>%inner_join(gender_var_fct,by="SEQN")%>%inner_join(Meat_var,by="SEQN")%>%inner_join(dairy_var,by="SEQN")%>%inner_join(vege_var,by="SEQN")%>%inner_join(fruit_var,by="SEQN")
+age_gender_food <- age_var_fct %>% inner_join(gender_var_fct, by = "SEQN") %>% inner_join(Meat_var, by = "SEQN") %>% inner_join(dairy_var, by = "SEQN") %>% inner_join(vege_var, by = "SEQN") %>% inner_join(fruit_var, by = "SEQN")
 
 
 
-kable(head(age_gender_food),caption="<b>Age, Gender and Food variables</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)
+kable(head(age_gender_food), caption = "<b>Age, Gender and Food variables</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
 
 We make a a table of the average consumption by `age` and by `gender`.
 ```{r}
 
-age_gender_food_grouped<-age_gender_food%>%group_by(age,gender)%>%summarize(avg_meat_cons=ceiling(mean(meat_cons,na.rm=TRUE)),avg_dairy_cons=ceiling(mean(dairy_cons,na.rm=TRUE)),avg_vege_cons=ceiling(mean(vege_cons,na.rm=TRUE)),avg_fruit_cons=ceiling(mean(fruit_cons,na.rm=TRUE)))
+age_gender_food_grouped <- age_gender_food %>% group_by(age, gender) %>% summarize(avg_meat_cons = ceiling(mean(meat_cons, na.rm = TRUE)), avg_dairy_cons = ceiling(mean(dairy_cons, na.rm = TRUE)), avg_vege_cons = ceiling(mean(vege_cons, na.rm = TRUE)), avg_fruit_cons = ceiling(mean(fruit_cons, na.rm = TRUE)))
 
-kable(age_gender_food_grouped,caption="<b>Average consumption of meat, dairy products, vegetables, fruits by age and gender categories</b>",digit=3,format.args = list(scientific = FALSE))%>%kable_material(c("striped", "hover"))%>%kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
+kable(age_gender_food_grouped, caption = "<b>Average consumption of meat, dairy products, vegetables, fruits by age and gender categories</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)%>%scroll_box(width = "1000px", height = "500px")
 
 
 ```
@@ -821,28 +821,28 @@ This table shows us that the consumption of dairy products is more present in ba
 
 
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a multivariate barplox, with meat consumption, we fill by gender and we facet by age
-ggplot(data = age_gender_food)+geom_bar(mapping=aes(x=meat_cons,fill=gender))+facet_wrap(~age)+labs(title="Meat consumption by gender and age category",x = "Meat consumption", y="Count")+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+ggplot(data = age_gender_food) + geom_bar(mapping = aes(x = meat_cons, fill = gender)) + facet_wrap(~age) + labs(title = "Meat consumption by gender and age category", x = "Meat consumption", y = "Count") + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
 ```
 We can observe that the consumption of meat increases during growth i.e. from kid to teenager but this relationship stops from teenager and takes the opposite turn, the consumption of meat decreases later from teenager to senior plus.  
 It can also be noted that the consumption of men is higher than that of women, as we observe a higher proportion in the high frequencies and a smaller in low frequencies.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a multivariate barplox, with dairy products consumption, we fill by gender and we facet by age
-ggplot(data = age_gender_food)+geom_bar(mapping=aes(x=dairy_cons,fill=gender))+facet_wrap(~age)+labs(title="Diary products consumption by gender and age category",x = "Diary products consumption", y="Count")+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+ggplot(data = age_gender_food) + geom_bar(mapping = aes(x = dairy_cons, fill = gender)) + facet_wrap(~age) + labs(title = "Diary products consumption by gender and age category", x = "Diary products consumption", y = "Count") + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
 ```
 Regarding now the consumption of dairy products, we can see that babies, kids, and teenagers consume more often dairy products. In addition, the majority of them consume these products once a month in general and women who consume more dairy products, as we can observe high proportion in higher frequencies.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a multivariate barplox, with vegetables consumption, we fill by gender and we facet by age
-ggplot(data = age_gender_food)+geom_bar(mapping=aes(x=vege_cons,fill=gender))+facet_wrap(~age)+labs(title="Vegetable consumption by gender and age category",x = "Vegetable consumption", y="Count")+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+ggplot(data = age_gender_food) + geom_bar(mapping = aes(x = vege_cons, fill = gender)) + facet_wrap(~age) + labs(title = "Vegetable consumption by gender and age category", x = "Vegetable consumption", y = "Count") + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
 ```
 With age vegetables consumption increase once adult, and women eat more vegetables at every age category.
 
-```{r,warning=FALSE}
+```{r, warning = FALSE}
 # we make a multivariate barplox, with fruit consumption, we fill by gender and we facet by age
-ggplot(data = age_gender_food)+geom_bar(mapping=aes(x=fruit_cons,fill=gender))+facet_wrap(~age)+labs(title="Fruit consumption by gender and age category",x = "Fruit consumption", y="Count")+scale_x_continuous(breaks=c(0,2,4,6,8,10))
+ggplot(data = age_gender_food) + geom_bar(mapping = aes(x = fruit_cons, fill = gender)) + facet_wrap(~age) + labs(title = "Fruit consumption by gender and age category", x = "Fruit consumption", y = "Count") + scale_x_continuous(breaks = c(0, 2, 4, 6, 8, 10))
 ```
 We don't see any an effect of age, but we can see that women eat more fruit, as the proportion of female increase in the higher frequencies.
 
@@ -855,7 +855,7 @@ There are no correlations that we could consider important or strong, however th
 
 About other variables that could be linked to cancer:  
 The pool of respondents is rather young because half of the observations concern people under the age of 19. However, the average is 28 years old. The proportion of male and female sex is balanced.
-When it comes to income, people earning over $ 75,000 are over-represented.
+When it comes to income, people earning over $ 75, 000 are over-represented.
 The majority of our respondents do not engage in any physical activity and not even from time to time.
 Cigarette smoke per day is approximate, we observed that many respondents rounded their consumption to 10, 20, 30, 40 which reminds us that when people take a survey, nothing is really sure or precise.
 There is no strong correlation between these variables, the highest correlation is a negative correlation, between age and average

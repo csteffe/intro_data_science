@@ -38,26 +38,26 @@ For our study we will use 7 datasets :
 Here is a preview of our first dataset.
 ```{r}
 # we import our dataset about nutrion as a tible with the function read_xpt
-Food_original<-as_tibble(read_xpt(file = here::here("data/FFQRAW_D.XPT")))
+Food_original <- as_tibble(read_xpt(file = here::here("data/FFQRAW_D.XPT")))
 # we use the function gslimpse to see the structure of our table ( first 15 variables)
-glimpse(Food_original[,1:15])
+glimpse(Food_original[, 1:15])
 
 ```
 
 
 
 This first dataset about nutrition has `r nrow(Food_original)` observations and `r ncol(Food_original)` variables, it is important to highlight that most of our variables are categorical numeric variables ranged from 1 to 11 :  
--1=never  
--2=1-6 times per year  
--3=7-11 times per year  
--4=1 time per month  
--5=2-3 times per month  
--6=1 time per week  
--7=2 times per week  
--8=3-4 times per week  
--9=5-6 times per week  
--10=1 time per day  
--11=2 or more times per day  
+-1 = never  
+-2 = 1-6 times per year  
+-3 = 7-11 times per year  
+-4 = 1 time per month  
+-5 = 2-3 times per month  
+-6 = 1 time per week  
+-7 = 2 times per week  
+-8 = 3-4 times per week  
+-9 = 5-6 times per week  
+-10 = 1 time per day  
+-11 = 2 or more times per day  
 Other values are either blank or error and will be transformed to NA during cleaning process.  
 
 In this dataset we will use many variables that are of interest for our analysis, including :  
@@ -129,12 +129,71 @@ In this dataset we will use many variables that are of interest for our analysis
 
 ```{r}
 #we select all the variables that we will need for our analysis (meat,dairy,vegetable,fruit,)
-Food_vars<-Food_original%>%select(SEQN,FFQ0069,FFQ0070,FFQ0071,FFQ0072,FFQ0074,FFQ0075,FFQ0076,FFQ0077,FFQ0078,FFQ0079,FFQ0080,FFQ0081,FFQ0082,FFQ0083,FFQ0084,FFQ0085,FFQ0086,FFQ0087,FFQ0088,FFQ0089,FFQ0090,FFQ0007,FFQ0108,FFQ0109,FFQ0110,FFQ0111,FFQ0112,FFQ0137,FFQ0138,FFQ0028,FFQ0029,FFQ0030,FFQ0031,FFQ0032,FFQ0033,FFQ0034,FFQ0035,FFQ0036,FFQ0037,FFQ0038,FFQ0039,FFQ0040,FFQ0041,FFQ0042,FFQ0043,FFQ0044,FFQ0015,FFQ0016,FFQ0017,FFQ0018,FFQ0019,FFQ0020,FFQ0021,FFQ0022,FFQ0023,FFQ0024,FFQ0025,FFQ0026,FFQ0027)
+Food_vars <- Food_original %>% select(SEQN,
+                                      FFQ0069,
+                                      FFQ0070,
+                                      FFQ0071,
+                                      FFQ0072,
+                                      FFQ0074,
+                                      FFQ0075,
+                                      FFQ0076,
+                                      FFQ0077,
+                                      FFQ0078,
+                                      FFQ0079,
+                                      FFQ0080,
+                                      FFQ0081,
+                                      FFQ0082,
+                                      FFQ0083,
+                                      FFQ0084,
+                                      FFQ0085,
+                                      FFQ0086,
+                                      FFQ0087,
+                                      FFQ0088,
+                                      FFQ0089,
+                                      FFQ0090,
+                                      FFQ0007,
+                                      FFQ0108,
+                                      FFQ0109,
+                                      FFQ0110,
+                                      FFQ0111,
+                                      FFQ0112,
+                                      FFQ0137,
+                                      FFQ0138,
+                                      FFQ0028,
+                                      FFQ0029,
+                                      FFQ0030,
+                                      FFQ0031,
+                                      FFQ0032,
+                                      FFQ0033,
+                                      FFQ0034,
+                                      FFQ0035,
+                                      FFQ0036,
+                                      FFQ0037,
+                                      FFQ0038,
+                                      FFQ0039,
+                                      FFQ0040,
+                                      FFQ0041,
+                                      FFQ0042,
+                                      FFQ0043,
+                                      FFQ0044,
+                                      FFQ0015,
+                                      FFQ0016,
+                                      FFQ0017,
+                                      FFQ0018,
+                                      FFQ0019,
+                                      FFQ0020,
+                                      FFQ0021,
+                                      FFQ0022,
+                                      FFQ0023,
+                                      FFQ0024,
+                                      FFQ0025,
+                                      FFQ0026,
+                                      FFQ0027)
 ```
 Here we can observe the proportion of missing values for the selected variables.
 ```{r}
 # we use the function freq.na to see the proportion of NA in every variables
-freq.na(Food_vars[,1:15])
+freq.na(Food_vars[, 1:15]) %>% kable()
 ```
 There is no NA in this dataset.
 
@@ -143,9 +202,9 @@ There is no NA in this dataset.
 Here is a preview of our second dataset.
 ```{r}
 # we import our diet behavior & nutrition dataset
-Dietary_original<-as_tibble(read_xpt(file = here::here("data/DBQ_D.XPT")))
+Dietary_original <- as_tibble(read_xpt(file = here::here("data/DBQ_D.XPT")))
 # we display its structure
-glimpse(Dietary_original[,1:15])
+glimpse(Dietary_original[, 1:15])
 
 ```
 This second dataset has `r nrow(Dietary_original)` observations and `r ncol(Dietary_original)` variables. for our analysis we are only going to use two variables :  
@@ -155,7 +214,7 @@ This second dataset has `r nrow(Dietary_original)` observations and `r ncol(Diet
 
 
 ```{r}
-Dietary_vars<-Dietary_original%>%select(SEQN,DBQ700)
+Dietary_vars <- Dietary_original %>% select(SEQN, DBQ700)
 # how healthy is the diet
 ```
 Here we can observe the proportion of missing values for the selected variables.
@@ -169,9 +228,9 @@ freq.na(Dietary_vars)
 Here is a preview of our third dataset.
 ```{r}
 # we import our medical dataset
-Medical_original<-as_tibble(read_xpt(file = here::here("data/MCQ_D.XPT")))
+Medical_original <- as_tibble(read_xpt(file = here::here("data/MCQ_D.XPT")))
 # we display it's structure
-glimpse(Medical_original[,1:15])
+glimpse(Medical_original[, 1:15])
 ```
 
 
@@ -187,14 +246,14 @@ The variable : what kind of cancer exists 4 times(A,B,C,D) in case respondents h
 
 ```{r}
 # we select our variables
-Medical_vars<-Medical_original%>%select(SEQN,MCQ220,MCQ230A,MCQ230B,MCQ230C)
+Medical_vars <- Medical_original %>% select(SEQN, MCQ220, MCQ230A, MCQ230B, MCQ230C)
 ```
 
 ```{r}
 # we change our variable MCQ 220 ever told you had cancer ? the value 9 to NA
-Medical_vars<-Medical_vars%>%replace_with_na(replace=list(MCQ220=9,MCQ230A=9))%>%replace_with_na(replace=list(MCQ230A=99))
+Medical_vars <- Medical_vars %>% replace_with_na(replace = list(MCQ220 = 9, MCQ230A = 9)) %>% replace_with_na(replace = list(MCQ230A = 99))
 # we change the values so we have 0 if no and 1 if yes because we will need those values for our logistics regression
-Medical_vars<-Medical_vars%>%mutate(MCQ220=recode(Medical_vars$MCQ220,'2'=0))
+Medical_vars <- Medical_vars %>% mutate(MCQ220 = recode(Medical_vars$MCQ220, '2'= 0))
 
 ```
 Here we can observe the proportion of missing values for the selected variables.
@@ -212,7 +271,7 @@ Here is a preview of our forth dataset.
 
 ```{r}
 # we import out dataset
-Alcohol_original<-as_tibble(read_xpt(file = here::here("data/ALQ_D.XPT")))
+Alcohol_original <- as_tibble(read_xpt(file = here::here("data/ALQ_D.XPT")))
 # we display its structure
 glimpse(Alcohol_original)
 ```
@@ -224,10 +283,10 @@ This 4th dataset is about Alcohol consumption, it has `r nrow(Alcohol_original)`
 
 ```{r}
 # we select our variables
-Alcohol_vars<-Alcohol_original%>%select(SEQN,ALQ130)
+Alcohol_vars <- Alcohol_original %>% select(SEQN, ALQ130)
 
 # we change for alcool variable all the values 999 to NA
-Alcohol_vars<-Alcohol_vars%>%replace_with_na(replace=list(ALQ130=999))
+Alcohol_vars <- Alcohol_vars %>% replace_with_na(replace = list(ALQ130 = 999))
 
 ```
 
@@ -245,9 +304,9 @@ Here is a preview of our fifth dataset.
 
 ```{r}
 # we import our dataset
-Demography_original<-as_tibble(read_xpt(file = here::here("data/DEMO_D.XPT")))
+Demography_original <- as_tibble(read_xpt(file = here::here("data/DEMO_D.XPT")))
 # we display its structure
-glimpse(Demography_original[,1:15])
+glimpse(Demography_original[, 1:15])
 ```
 
 
@@ -261,9 +320,9 @@ This 5th dataset is about demography it has `r nrow(Demography_original)` observ
 
 ```{r}
 # we select our variables
-Demography_vars<-Demography_original%>%select(SEQN,RIAGENDR,RIDAGEYR,INDHHINC)
+Demography_vars <- Demography_original %>% select(SEQN, RIAGENDR, RIDAGEYR, INDHHINC)
 # we replace value 99(don't know) and 77(refused) to NA 
-Demography_vars<-Demography_vars %>% replace_with_na(replace=list(INDHHINC=99))%>%replace_with_na(replace=list(INDHHINC=77))
+Demography_vars <- Demography_vars %>% replace_with_na(replace = list(INDHHINC = 99)) %>%replace_with_na(replace = list(INDHHINC = 77))
 ```
 
 Here we can observe the proportion of missing values for the selected variables.
@@ -278,7 +337,7 @@ There is only 4% of missing value about income, and no missing values about gend
 Here is a preview of our sixth dataset.
 ```{r}
 # we import our dataset
-physical_original<-as_tibble(read_xpt(file = here::here("data/PAQ_D.XPT")))
+physical_original <- as_tibble(read_xpt(file = here::here("data/PAQ_D.XPT")))
 # we display its structure
 glimpse(physical_original)
 ```
@@ -289,9 +348,9 @@ This 6th dataset is about physical activity it has `r nrow(physical_original)` o
 
 ```{r}
 # we select our variables
-physical_vars<-physical_original%>%select(SEQN,PAQ180)
+physical_vars <- physical_original %>%select(SEQN, PAQ180)
 #  we replace value 9(don't know) and 7(refused) to NA 
-physical_vars<-physical_vars%>%replace_with_na(replace=list(PAQ180=7))%>%replace_with_na(replace=list(PAQ180=9))
+physical_vars <- physical_vars %>%replace_with_na(replace = list(PAQ180 = 7)) %>%replace_with_na(replace = list(PAQ180 = 9))
 ```
 
 Here we can observe the proportion of missing values for the selected variables.
@@ -306,9 +365,9 @@ There is 35% missing values about the physical activity variable.
 Here is a preview of our seventh dataset.
 ```{r}
 #we import our dataset 
-Smoking_original<-as_tibble(read_xpt(file = here::here("data/SMQ_D.XPT")))
+Smoking_original <- as_tibble(read_xpt(file = here::here("data/SMQ_D.XPT")))
 # we display its structure
-glimpse(Smoking_original[,1:15])
+glimpse(Smoking_original[, 1:15])
 ```
 This 7th dataset is about smoking it has `r nrow(Smoking_original)` observations and `r ncol(Smoking_original)` variables. For our analysis we are going to use :  
 -`SEQN` - `r attributes(Smoking_original$SEQN)` , which will be our reference to merge our different datasets.  
@@ -316,9 +375,9 @@ This 7th dataset is about smoking it has `r nrow(Smoking_original)` observations
 -`SMD070`- `r attributes(Smoking_original$SMD070)`
 ```{r}
 # we select our variables
-Smoking_vars<-Smoking_original%>%select(SEQN,SMD070)
+Smoking_vars <- Smoking_original %>%select(SEQN, SMD070)
 #we replace value 999 to NA
-Smoking_vars<-Smoking_vars%>%replace_with_na(replace=list(SMD070=999))
+Smoking_vars <- Smoking_vars %>%replace_with_na(replace = list(SMD070 = 999))
 ```
 
 Here we can observe the proportion of missing values for the selected variables.
