@@ -2,7 +2,7 @@
 
 ## context
 
-My first project of data science in 2020, as part of the course **introduction to datascience**. The subject is to analysis relationship between meat consumption and cancer, with the use of visualization, correlations and supervised learning (logistics regression). 
+My first project of data science in 2020, as part of the course **introduction to data science from MScM at HEC Lausanne**. The subject is to analysis relationship between meat consumption and cancer, with the use of visualization, correlations and supervised learning (logistics regression). 
 
 ## material
 
