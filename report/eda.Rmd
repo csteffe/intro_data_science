@@ -60,12 +60,11 @@ kable(head(Meat_var), caption = "<b>Meat variable</b>", digit = 3, format.args =
 ```
 
 
-In order to understand the distribution of meat consumption we make a summary and a boxplot.
+In order to understand the distribution of meat consumption we make a summary statistics.
 ```{r, warning = FALSE}
 # we use the function summary to display some statistical information
+
 summary(Meat_var$meat_cons)
-# we make a boxplot to have an idea about the consumption of our sample
-ggplot() + geom_boxplot(data = Meat_var, aes(x = meat_cons)) + labs(title = "Meat consumption distribution", x = "Frequency", y = "Meat consumption")
 
 
 ```
@@ -123,11 +122,10 @@ dairy_var <- dairy_vars %>% select(SEQN, dairy_cons) %>% filter(!is.nan(dairy_co
 kable(head(dairy_var), caption = "<b>Diary products variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
   
-In order to understand the distribution of dairy products variable, we make a summary and a boxplot.
+In order to understand the distribution of dairy products variable, we make a summary statistics.
 
 ```{r, warning = FALSE}
-# we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot() + geom_boxplot(data = dairy_var, aes(x = dairy_cons)) + labs(title = "Distribution of consumption of dairy products", x = "Frequency", y = "Diary products consumption")
+
 # we use the function summary to display some statistical information
 summary(dairy_var$dairy_cons)
 ```
@@ -187,11 +185,9 @@ kable(head(vege_var), caption = "<b>Vegetable variable</b>", digit = 3, format.a
 ```
 
 
-In order to understand the distribution of vegetable variable, we make a summary and a boxplot.
+In order to understand the distribution of vegetable variable, we make a summary statistics.
 ```{r, warning = FALSE}
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-
-ggplot() + geom_boxplot(data = vege_var, aes(x = vege_cons)) + labs(title = "Distribution of vegetable consumption", x = "Frequency", y = "Vegetable consumption")
 
 
 summary(vege_var$vege_cons)
@@ -247,11 +243,10 @@ fruit_var <- fruit_vars %>% select(SEQN, fruit_cons) %>% filter(!is.nan(fruit_co
 kable(head(fruit_var), caption = "<b>Fruit variable</b>", digit = 3, format.args = list(scientific = FALSE)) %>% kable_material(c("striped", "hover")) %>% kable_styling(full_width = F)
 ```
 
-In order to understand the distribution of fruit variable, we make a summary and a boxplot
+In order to understand the distribution of fruit variable, we make a summary statistics.
 ```{r, warning = FALSE}
 
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot() + geom_boxplot(data = fruit_var, aes(x = fruit_cons)) + labs(title = "Distribution of fruit consumption ", x = "Frequency", y = "Fruit consumption")
 summary(fruit_var$fruit_cons)
 
 ```
@@ -306,10 +301,9 @@ There are different categories defining how healthy the diet is :
 
 
 
-In order to understand the distribution of this `diet` variable, we make a summary and a boxplot.
+In order to understand the distribution of this `diet` variable, we make a summary statistics.
 ```{r, warning = FALSE}
 # we make a summary and a boxplot to have an idea about the consumption of our sample
-ggplot() + geom_boxplot(data = Dietary_vars, aes(x = diet)) + labs(title = " How healthy is the diet ? ", x = "Type", y = "Diet")
 
 summary(Dietary_vars$diet)
 
@@ -390,8 +384,6 @@ kable(head(age_var), caption = "<b>Age variable</b>", digit = 3, format.args = l
 In order to understand the distribution of `age` we make a boxplot and a summary.
 
 ```{r}
-# we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot() + geom_boxplot(data = age_var, aes(x = age)) + labs(title = "Age distribution", x = "Year", y = "Age")
 # we use the function summary to display some statistical information
 summary(age_var$age)
 
@@ -501,10 +493,8 @@ It is important to know that in this variable, `income` is a numeric categorical
 -12  = Over $20, 000   
 -13  = Under $20, 000  
 
-In order to understand the distribution of `income`, we make a summary and a boxplot.
+In order to understand the distribution of `income`, we make a summary statistics.
 ```{r, warning = FALSE}
-# we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot() + geom_boxplot(data = income_var, aes(x = income)) + labs(title = "Income distribution", x = "Income Category", y = "Income")
 # we use the function summary to display some statistical informations
 summary(income_var$income)
 
@@ -550,10 +540,9 @@ It is important to mention that this variable is categorical and numeric, which 
 -4 {you/he/she} {do/does} heavy work or {carry/carries} heavy loads. 
 
 
-In order to understand the distribution of physical activity, we make a summary and a boxplot.
+In order to understand the distribution of physical activity, we make a summary statistics.
 ```{r, warning = FALSE}
-# we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot() + geom_boxplot(data = physical_var, aes(x = avg_physical_activity)) + labs(title = "Physical activity distribution", x = "Category", y = "Physical activity")
+
 # we use the function summary to display some statistical information
 summary(physical_var$avg_physical_activity)
 
@@ -596,11 +585,10 @@ kable(head(Alcohol_var %>% filter(!is.na(avg_alcohol))), caption = "<b>Average c
 
 
 
-In order to understand the distribution of the average alcohol consumption, we make a summary and a boxplot.
+In order to understand the distribution of the average alcohol consumption, we make a summary statistics.
 
 ```{r, warning = FALSE}
-# we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot() + geom_boxplot(data = Alcohol_var, aes(x = avg_alcohol)) + labs(title = "Alcohol distribution", x = "Number of drinks", y = "Alcohol consumption")
+
 # we use the function summary to display some statistical information
 summary(Alcohol_var$avg_alcohol)
 
@@ -641,8 +629,7 @@ It is important to note that it is not possible for us to know if a respondent d
 In order to understand the distribution of `cigarets_per_day` we make a summary and a boxplot
 
 ```{r, warning = FALSE}
-# we make a boxplot using the function ggplot and boxplot and we add a tittle with a function labs
-ggplot() + geom_boxplot(data = Smoking_var, aes(x = cigarets_per_day)) + labs(title = "Cigarettes per day distribution", x = "Number of cigarettes", y = "Cigarettes smoked")
+
 # we use the function summary to display some statistical information
 summary(Smoking_var$cigarets_per_day)
 
